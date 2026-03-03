@@ -1,0 +1,545 @@
+options:
+  parameters:
+    author: Nico García-Amorena
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: 'Barrido chirp 2.400-2.420 GHz + Beamforming 2 antenas
+
+      PlutoSDR+ (2TX): Antena1=fase 0, Antena2=fase phi (slider)
+
+      Preparado para DOA con segundo PlutoSDR (futuro)
+
+      Separacion antenas: lambda = 12.5 cm @ 2.4 GHz'
+    copyright: ''
+    description: Chirp Sweep + Beamforming 2 antenas PlutoSDR+
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: pluto_beamforming_sweep
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Chirp Sweep + Beamforming 2.4 GHz
+    window_size: (1200,800)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 0
+    - 160.0
+    rotation: 0
+    state: enabled
+blocks:
+- name: ant_separation
+  id: variable
+  parameters:
+    comment: 'Separacion antenas: lambda/2 @ 2.4GHz = 0.0625 m
+
+      Optimo para beamforming sin grating lobes'
+    value: '0.0625'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 744
+    - 56.0
+    rotation: 0
+    state: enabled
+- name: beam_angle_deg
+  id: variable_qtgui_range
+  parameters:
+    comment: 'Angulo de apuntamiento del haz en grados.
+
+      FUTURO: sera sobreescrito por el estimador DOA
+
+      del segundo PlutoSDR receptor.'
+    gui_hint: 0,0,1,1
+    label: Angulo Beamforming (grados)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '-90'
+    step: '1'
+    stop: '90'
+    value: '0'
+    widget: slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1032
+    - 192.0
+    rotation: 0
+    state: enabled
+- name: center_freq
+  id: variable
+  parameters:
+    comment: Centro del rango de barrido (2.410 GHz)
+    value: '2410000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 464
+    - 168.0
+    rotation: 0
+    state: enabled
+- name: phase_shift
+  id: variable
+  parameters:
+    comment: 'Desfase beamforming ULA 2 antenas.
+
+      NOTA: recalcular o usar callback para tiempo real.
+
+      phi = 2*pi*(d/lambda)*sin(theta)'
+    value: 2*math.pi*(ant_separation/0.125)*math.sin(math.radians(beam_angle_deg))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1032
+    - 56.0
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: 20 MSPS necesario para cubrir 20 MHz de barrido
+    value: '20000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 192
+    - 168.0
+    rotation: 0
+    state: enabled
+- name: sweep_bw
+  id: variable
+  parameters:
+    comment: 'Ancho de barrido: 20 MHz (2.400 a 2.420 GHz)'
+    value: '20000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 192
+    - 56.0
+    rotation: 0
+    state: enabled
+- name: sweep_time
+  id: variable
+  parameters:
+    comment: Duracion de un ciclo de barrido en segundos
+    value: '0.490'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 464
+    - 56.0
+    rotation: 0
+    state: enabled
+- name: tx_gain
+  id: variable
+  parameters:
+    comment: Ganancia TX PlutoSDR+ en dB
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 744
+    - 168.0
+    rotation: 0
+    state: enabled
+- name: chirp_source
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    Generador de Chirp Continuo para barrido de frecuencia.\n \
+      \   \n    Genera señal compleja cuya frecuencia varia linealmente:\n       \
+      \ f(t) = -BW/2  →  +BW/2  en sweep_time segundos\n    \n    La portadora del\
+      \ PlutoSDR+ se fija en center_freq.\n    El chirp en banda base produce el barrido\
+      \ RF:\n        2.400 GHz  →  2.420 GHz\n    \"\"\"\n\n    def __init__(self,\
+      \ sample_rate=20000000, sweep_bw=20000000, sweep_time=0.490, amplitude=0.9):\n\
+      \        gr.sync_block.__init__(\n            self,\n            name='Chirp\
+      \ Sweep Source',\n            in_sig=None,\n            out_sig=[np.complex64],\n\
+      \        )\n        self.sample_rate = sample_rate\n        self.sweep_bw  \
+      \  = sweep_bw\n        self.sweep_time  = sweep_time\n        self.amplitude\
+      \   = amplitude\n        self.samples_per_sweep = int(sample_rate * sweep_time)\n\
+      \        self.chirp_rate = sweep_bw / self.samples_per_sweep\n        self.sample_idx\
+      \ = 0\n\n    def work(self, input_items, output_items):\n        n = len(output_items[0])\n\
+      \        idx = np.arange(self.sample_idx, self.sample_idx + n)\n        pos\
+      \ = idx % self.samples_per_sweep\n        # Fase cuadratica: garantiza continuidad\
+      \ y barrido lineal\n        phase = 2 * np.pi * (\n            (self.chirp_rate\
+      \ / (2 * self.sample_rate)) * pos**2\n            - (self.sweep_bw / (2 * self.sample_rate))\
+      \ * pos\n        )\n        output_items[0][:n] = (self.amplitude * np.exp(1j\
+      \ * phase)).astype(np.complex64)\n        self.sample_idx += n\n        return\
+      \ n\n"
+    affinity: ''
+    alias: ''
+    amplitude: '0.9'
+    comment: 'CHIRP SOURCE
+
+      Genera barrido continuo -10MHz a +10MHz
+
+      en banda base.
+
+      Con portadora en 2.410 GHz produce:
+
+      2.400 GHz → 2.420 GHz en RF'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+    sweep_bw: sweep_bw
+    sweep_time: sweep_time
+  states:
+    _io_cache: ('Chirp Sweep Source', 'blk', [('sample_rate', '20000000'), ('sweep_bw',
+      '20000000'), ('sweep_time', '0.49'), ('amplitude', '0.9')], [], [('0', 'complex',
+      1)], '\n    Generador de Chirp Continuo para barrido de frecuencia.\n    \n    Genera
+      señal compleja cuya frecuencia varia linealmente:\n        f(t) = -BW/2  →  +BW/2  en
+      sweep_time segundos\n    \n    La portadora del PlutoSDR+ se fija en center_freq.\n    El
+      chirp en banda base produce el barrido RF:\n        2.400 GHz  →  2.420 GHz\n    ',
+      ['amplitude', 'sample_rate', 'sweep_bw', 'sweep_time'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 0
+    - 544.0
+    rotation: 0
+    state: enabled
+- name: doa_estimator_future
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    FUTURO: Estimador DOA para segundo PlutoSDR receptor.\n   \
+      \ \n    Algoritmo: MUSIC (MUltiple SIgnal Classification)\n    Entrada: señal\
+      \ IQ del PlutoSDR receptor\n    Salida: angulo estimado en radianes → alimenta\
+      \ phase_shift\n    \n    Para habilitar:\n    1. Conectar PlutoSDR RX a la entrada\
+      \ de este bloque\n    2. Conectar salida a variable beam_angle_deg\n    3. El\
+      \ slider pasa a modo visualizacion\n    \n    Separacion antenas RX: lambda\
+      \ = 12.5 cm @ 2.4 GHz\n    \"\"\"\n\n    def __init__(self, sample_rate=20000000,\
+      \ ant_separation=0.125, freq=2410000000):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='DOA Estimator (MUSIC)',\n            in_sig=[np.complex64],\n\
+      \            out_sig=[np.float32],  # angulo en grados\n        )\n        self.sample_rate\
+      \ = sample_rate\n        self.ant_separation = ant_separation\n        self.wavelength\
+      \ = 3e8 / freq\n        self.buffer = []\n        self.buffer_size = 1024\n\n\
+      \    def work(self, input_items, output_items):\n        \"\"\"\n        PENDIENTE\
+      \ DE IMPLEMENTACION:\n        - Acumular muestras del PlutoSDR RX\n        -\
+      \ Calcular matriz de covarianza R = E[x*x^H]\n        - Aplicar MUSIC: eigendescomposicion\
+      \ de R\n        - Buscar pico en espectro espacial MUSIC\n        - Retornar\
+      \ angulo en grados\n        \"\"\"\n        n = len(input_items[0])\n      \
+      \  # Placeholder: retorna 0 grados hasta implementacion real\n        output_items[0][:n]\
+      \ = np.zeros(n, dtype=np.float32)\n        return n\n"
+    affinity: ''
+    alias: ''
+    ant_separation: ant_separation
+    comment: 'FUTURO: DOA con segundo PlutoSDR
+
+      ALGORITMO: MUSIC
+
+      ENTRADA: IQ del PlutoSDR RX
+
+      SALIDA: angulo estimado → beam_angle_deg
+
+      ESTADO: DESHABILITADO hasta tener 2º Pluto'
+    freq: center_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+  states:
+    _io_cache: '(''DOA Estimator (MUSIC)'', ''blk'', [(''sample_rate'', ''20000000''),
+      (''ant_separation'', ''0.125''), (''freq'', ''2410000000'')], [(''0'', ''complex'',
+      1)], [(''0'', ''float'', 1)], ''\n    FUTURO: Estimador DOA para segundo PlutoSDR
+      receptor.\n    \n    Algoritmo: MUSIC (MUltiple SIgnal Classification)\n    Entrada:
+      señal IQ del PlutoSDR receptor\n    Salida: angulo estimado en radianes → alimenta
+      phase_shift\n    \n    Para habilitar:\n    1. Conectar PlutoSDR RX a la entrada
+      de este bloque\n    2. Conectar salida a variable beam_angle_deg\n    3. El
+      slider pasa a modo visualizacion\n    \n    Separacion antenas RX: lambda =
+      12.5 cm @ 2.4 GHz\n    '', [''ant_separation'', ''sample_rate''])'
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1320
+    - 288.0
+    rotation: 0
+    state: disabled
+- name: iio_pluto_sink_0
+  id: iio_pluto_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    attenuation1: '10'
+    bandwidth: samp_rate
+    buffer_size: '32768'
+    comment: 'PLUTOSDR+ TX - DESHABILITADO (modo simulacion)
+
+      Para transmitir con hardware:
+
+      1) Cambiar state a enabled
+
+      2) Deshabilitar throttle_ant1
+
+      3) Cambiar URI: ip:192.168.2.1 o usb:1.X.X
+
+      Canal 0 → TX1 (Antena 1, fase 0)
+
+      Canal 1 → TX2 (Antena 2, fase phi)'
+    cyclic: 'False'
+    filter: ''
+    filter_source: '''Auto'''
+    fpass: '0'
+    frequency: center_freq
+    fstop: '0'
+    len_tag_key: ''
+    samplerate: samp_rate
+    type: fc32
+    uri: ip:192.168.2.1
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1320
+    - 84.0
+    rotation: 0
+    state: disabled
+- name: import_math
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import math
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1320
+    - 464.0
+    rotation: 0
+    state: enabled
+- name: import_numpy
+  id: import
+  parameters:
+    alias: np
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 1320
+    - 392.0
+    rotation: 0
+    state: enabled
+- name: multiply_const_ant1
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'ANTENA 1
+
+      Fase = 0 grados (referencia)
+
+      Sin modificacion de fase'
+    const: '1.0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 440
+    - 472.0
+    rotation: 0
+    state: enabled
+- name: multiply_const_ant2
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'ANTENA 2
+
+      Aplica desfase de beamforming:
+
+      phi = 2*pi*sin(theta)
+
+      Controlado por slider (futuro: DOA)'
+    const: np.exp(1j * phase_shift)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 440
+    - 608.0
+    rotation: 0
+    state: enabled
+- name: qtgui_freq_sink_x_0
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '0.2'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"yellow"'
+    color10: '"dark blue"'
+    color2: '"cyan"'
+    color3: '"magenta"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: 'VISUALIZACION ESPECTRO
+
+      Muestra el chirp en tiempo real
+
+      Amarillo=Ant1, Cyan=Ant2'
+    ctrlpanel: 'False'
+    fc: center_freq
+    fftsize: '4096'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: ''
+    label: Espectro TX
+    label1: Antena 1
+    label10: ''
+    label2: Antena 2
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"Chirp Sweep - Barrido 2.400-2.420 GHz"'
+    nconnections: '2'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.1'
+    width1: '2'
+    width10: '1'
+    width2: '2'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 696
+    - 488.0
+    rotation: 0
+    state: enabled
+- name: throttle_ant1
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'SIMULACION: habilitado
+
+      Comentar/deshabilitar al usar PlutoSDR real
+
+      Limita CPU en simulacion'
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate:
+    - 224
+    - 560.0
+    rotation: 0
+    state: enabled
+connections:
+- - chirp_source
+  - '0'
+  - throttle_ant1
+  - '0'
+- - multiply_const_ant1
+  - '0'
+  - qtgui_freq_sink_x_0
+  - '0'
+- - multiply_const_ant2
+  - '0'
+  - qtgui_freq_sink_x_0
+  - '1'
+- - throttle_ant1
+  - '0'
+  - multiply_const_ant1
+  - '0'
+- - throttle_ant1
+  - '0'
+  - multiply_const_ant2
+  - '0'
+metadata:
+  file_format: 1
+  grc_version: 3.10.12.0
