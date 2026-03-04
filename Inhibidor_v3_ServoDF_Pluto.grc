@@ -1,0 +1,1521 @@
+options:
+  parameters:
+    author: "Nico Garc\xEDa-Amorena"
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: 'Barrido chirp 2.400-2.420 GHz + Beamforming 2 antenas
+
+      PlutoSDR+ (2TX): Antena1=fase 0, Antena2=fase phi (slider)
+
+      Preparado para DOA con segundo PlutoSDR (futuro)
+
+      Separacion antenas: lambda = 12.5 cm @ 2.4 GHz'
+    copyright: ''
+    description: Chirp Sweep + Beamforming 2 antenas PlutoSDR+
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: pluto_beamforming_sweep
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Chirp Sweep + Beamforming 2.4 GHz
+    window_size: (1200,800)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [0, 160.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: ant_separation
+  id: variable
+  parameters:
+    comment: 'Separacion antenas: lambda/2 @ 2.4GHz = 0.0625 m
+
+      Optimo para beamforming sin grating lobes'
+    value: '0.0625'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [736, 0.0]
+    rotation: 0
+    state: enabled
+- name: beam_angle_deg
+  id: variable_qtgui_range
+  parameters:
+    comment: 'Angulo de apuntamiento del haz en grados.
+
+      FUTURO: sera sobreescrito por el estimador DOA
+
+      del segundo PlutoSDR receptor.'
+    gui_hint: 0,0,1,1
+    label: Angulo Beamforming (grados)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '-90'
+    step: '1'
+    stop: '90'
+    value: '0'
+    widget: slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1032, 192.0]
+    rotation: 0
+    state: enabled
+- name: beam_angle_from_doa
+  id: variable_function_probe
+  parameters:
+    block_id: my_block_0
+    comment: "Binding DOA \u2192 beam_angle_deg\nActualiza el angulo TX automaticamente\n\
+      cuando el estimador MUSIC entrega nuevo valor"
+    function_args: ''
+    function_name: level
+    poll_rate: '10'
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1960, 352.0]
+    rotation: 0
+    state: disabled
+- name: beam_angle_from_servo
+  id: variable_function_probe
+  parameters:
+    block_id: my_block_0
+    comment: "Binding Servo DF \u2192 beam_angle_deg TX\nActualiza el angulo TX con\
+      \ el DOA del servo\n10 Hz de refresco"
+    function_args: ''
+    function_name: level
+    poll_rate: '10'
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1320, 48.0]
+    rotation: 0
+    state: enabled
+- name: center_freq
+  id: variable
+  parameters:
+    comment: Centro del rango de barrido (2.410 GHz)
+    value: '2410000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [464, 272.0]
+    rotation: 0
+    state: enabled
+- name: doa_angle_deg
+  id: variable
+  parameters:
+    comment: Angulo DOA estimado en grados (actualizado por MUSIC EPyBlock)
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1576, 176.0]
+    rotation: 0
+    state: enabled
+- name: null_angle_deg
+  id: variable_qtgui_range
+  parameters:
+    comment: Angulo de nulificacion (null steering TX)
+    gui_hint: 0,1,1,1
+    label: Angulo Nulo TX (grados)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '-90'
+    step: '1'
+    stop: '90'
+    value: '0'
+    widget: slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1720, 48.0]
+    rotation: 0
+    state: enabled
+- name: phase_shift
+  id: variable
+  parameters:
+    comment: 'Desfase beamforming ULA 2 antenas.
+
+      NOTA: recalcular o usar callback para tiempo real.
+
+      phi = 2*pi*(d/lambda)*sin(theta)'
+    value: 2*math.pi*(ant_separation/0.125)*math.sin(math.radians(beam_angle_deg))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1032, 56.0]
+    rotation: 0
+    state: enabled
+- name: rx_gain
+  id: variable
+  parameters:
+    comment: Ganancia RX PlutoSDR sensor en dB
+    value: '40'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 240.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: 20 MSPS necesario para cubrir 20 MHz de barrido
+    value: '20000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 152.0]
+    rotation: 0
+    state: enabled
+- name: scan_speed_deg_s
+  id: variable_qtgui_range
+  parameters:
+    comment: Velocidad angular del barrido (sim).
+    gui_hint: 0,0,1,1
+    label: Velocidad barrido [deg/s]
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '5'
+    step: '1'
+    stop: '120'
+    value: '30'
+    widget: slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [464, 0.0]
+    rotation: 0
+    state: enabled
+- name: src_angle_deg
+  id: variable_qtgui_range
+  parameters:
+    comment: "Direcci\xF3n real (simulada) de la se\xF1al. Solo para emulaci\xF3n."
+    gui_hint: 0,0,1,1
+    label: "Direcci\xF3n fuente (sim) [deg]"
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '-90'
+    step: '1'
+    stop: '90'
+    value: '15'
+    widget: slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 360.0]
+    rotation: 0
+    state: enabled
+- name: sweep_bw
+  id: variable
+  parameters:
+    comment: 'Ancho de barrido: 20 MHz (2.400 a 2.420 GHz)'
+    value: '20000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [112, 40.0]
+    rotation: 0
+    state: enabled
+- name: sweep_time
+  id: variable
+  parameters:
+    comment: Duracion de un ciclo de barrido en segundos
+    value: '0.490'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [464, 168.0]
+    rotation: 0
+    state: enabled
+- name: tx_gain
+  id: variable
+  parameters:
+    comment: Ganancia TX PlutoSDR+ en dB
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 128.0]
+    rotation: 0
+    state: enabled
+- name: ui_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '20'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [16, 40.0]
+    rotation: 0
+    state: enabled
+- name: angle_sweep
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"Angle sweep generator for a servo-style scan.\n\n    Outputs a float\
+      \ stream 'angle_deg' that sweeps between min_angle_deg and max_angle_deg.\n\
+      \    Intended to drive an external servo controller (e.g., via another block/serial),\n\
+      \    or to tag measurements with the current pointing angle.\n\n    This is\
+      \ *passive direction finding* by amplitude (scan + max RSSI), not interferer\
+      \ control.\n    \"\"\"\n\n    def __init__(self, rate_hz=20.0, min_angle_deg=-60.0,\
+      \ max_angle_deg=60.0, speed_deg_s=30.0):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Angle Sweep (deg)',\n            in_sig=None,\n\
+      \            out_sig=[np.float32],\n        )\n        self.rate = float(rate_hz)\n\
+      \        self.min_a = float(min_angle_deg)\n        self.max_a = float(max_angle_deg)\n\
+      \        self.speed = float(speed_deg_s)\n\n        self.angle = self.min_a\n\
+      \        self.dir = 1.0\n        self.step = self.speed / max(self.rate, 1e-9)\n\
+      \n    def work(self, input_items, output_items):\n        out = output_items[0]\n\
+      \        n = len(out)\n        for i in range(n):\n            out[i] = np.float32(self.angle)\n\
+      \            self.angle += self.dir * self.step\n            if self.angle >=\
+      \ self.max_a:\n                self.angle = self.max_a\n                self.dir\
+      \ = -1.0\n            elif self.angle <= self.min_a:\n                self.angle\
+      \ = self.min_a\n                self.dir = 1.0\n        return n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    max_angle_deg: '60'
+    maxoutbuf: '0'
+    min_angle_deg: '-60'
+    minoutbuf: '0'
+    rate_hz: ui_rate
+    speed_deg_s: scan_speed_deg_s
+  states:
+    _io_cache: ('Angle Sweep (deg)', 'blk', [('rate_hz', '20.0'), ('min_angle_deg',
+      '-60.0'), ('max_angle_deg', '60.0'), ('speed_deg_s', '30.0')], [], [('0', 'float',
+      1)], "Angle sweep generator for a servo-style scan.\n\n    Outputs a float stream
+      'angle_deg' that sweeps between min_angle_deg and max_angle_deg.\n    Intended
+      to drive an external servo controller (e.g., via another block/serial),\n    or
+      to tag measurements with the current pointing angle.\n\n    This is *passive
+      direction finding* by amplitude (scan + max RSSI), not interferer control.\n    ",
+      [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1968, 504.0]
+    rotation: 0
+    state: enabled
+- name: chirp_source
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    Generador de Chirp Continuo para barrido de frecuencia.\n \
+      \   \n    Genera se\xF1al compleja cuya frecuencia varia linealmente:\n    \
+      \    f(t) = -BW/2  \u2192  +BW/2  en sweep_time segundos\n    \n    La portadora\
+      \ del PlutoSDR+ se fija en center_freq.\n    El chirp en banda base produce\
+      \ el barrido RF:\n        2.400 GHz  \u2192  2.420 GHz\n    \"\"\"\n\n    def\
+      \ __init__(self, sample_rate=20000000, sweep_bw=20000000, sweep_time=0.490,\
+      \ amplitude=0.9):\n        gr.sync_block.__init__(\n            self,\n    \
+      \        name='Chirp Sweep Source',\n            in_sig=None,\n            out_sig=[np.complex64],\n\
+      \        )\n        self.sample_rate = sample_rate\n        self.sweep_bw  \
+      \  = sweep_bw\n        self.sweep_time  = sweep_time\n        self.amplitude\
+      \   = amplitude\n        self.samples_per_sweep = int(sample_rate * sweep_time)\n\
+      \        self.chirp_rate = sweep_bw / self.samples_per_sweep\n        self.sample_idx\
+      \ = 0\n\n    def work(self, input_items, output_items):\n        n = len(output_items[0])\n\
+      \        idx = np.arange(self.sample_idx, self.sample_idx + n)\n        pos\
+      \ = idx % self.samples_per_sweep\n        # Fase cuadratica: garantiza continuidad\
+      \ y barrido lineal\n        phase = 2 * np.pi * (\n            (self.chirp_rate\
+      \ / (2 * self.sample_rate)) * pos**2\n            - (self.sweep_bw / (2 * self.sample_rate))\
+      \ * pos\n        )\n        output_items[0][:n] = (self.amplitude * np.exp(1j\
+      \ * phase)).astype(np.complex64)\n        self.sample_idx += n\n        return\
+      \ n\n"
+    affinity: ''
+    alias: ''
+    amplitude: '0.9'
+    comment: "CHIRP SOURCE\nGenera barrido continuo -10MHz a +10MHz\nen banda base.\n\
+      Con portadora en 2.410 GHz produce:\n2.400 GHz \u2192 2.420 GHz en RF"
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+    sweep_bw: sweep_bw
+    sweep_time: sweep_time
+  states:
+    _io_cache: "('Chirp Sweep Source', 'blk', [('sample_rate', '20000000'), ('sweep_bw',\
+      \ '20000000'), ('sweep_time', '0.49'), ('amplitude', '0.9')], [], [('0', 'complex',\
+      \ 1)], '\\n    Generador de Chirp Continuo para barrido de frecuencia.\\n  \
+      \  \\n    Genera se\xF1al compleja cuya frecuencia varia linealmente:\\n   \
+      \     f(t) = -BW/2  \u2192  +BW/2  en sweep_time segundos\\n    \\n    La portadora\
+      \ del PlutoSDR+ se fija en center_freq.\\n    El chirp en banda base produce\
+      \ el barrido RF:\\n        2.400 GHz  \u2192  2.420 GHz\\n    ', ['amplitude',\
+      \ 'sample_rate', 'sweep_bw', 'sweep_time'])"
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [0, 656.0]
+    rotation: 0
+    state: enabled
+- name: doa_estimator_future
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    FUTURO: Estimador DOA para segundo PlutoSDR receptor.\n   \
+      \ \n    Algoritmo: MUSIC (MUltiple SIgnal Classification)\n    Entrada: se\xF1\
+      al IQ del PlutoSDR receptor\n    Salida: angulo estimado en radianes \u2192\
+      \ alimenta phase_shift\n    \n    Para habilitar:\n    1. Conectar PlutoSDR\
+      \ RX a la entrada de este bloque\n    2. Conectar salida a variable beam_angle_deg\n\
+      \    3. El slider pasa a modo visualizacion\n    \n    Separacion antenas RX:\
+      \ lambda = 12.5 cm @ 2.4 GHz\n    \"\"\"\n\n    def __init__(self, sample_rate=20000000,\
+      \ ant_separation=0.125, freq=2410000000):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='DOA Estimator (MUSIC)',\n            in_sig=[np.complex64],\n\
+      \            out_sig=[np.float32],  # angulo en grados\n        )\n        self.sample_rate\
+      \ = sample_rate\n        self.ant_separation = ant_separation\n        self.wavelength\
+      \ = 3e8 / freq\n        self.buffer = []\n        self.buffer_size = 1024\n\n\
+      \    def work(self, input_items, output_items):\n        \"\"\"\n        PENDIENTE\
+      \ DE IMPLEMENTACION:\n        - Acumular muestras del PlutoSDR RX\n        -\
+      \ Calcular matriz de covarianza R = E[x*x^H]\n        - Aplicar MUSIC: eigendescomposicion\
+      \ de R\n        - Buscar pico en espectro espacial MUSIC\n        - Retornar\
+      \ angulo en grados\n        \"\"\"\n        n = len(input_items[0])\n      \
+      \  # Placeholder: retorna 0 grados hasta implementacion real\n        output_items[0][:n]\
+      \ = np.zeros(n, dtype=np.float32)\n        return n\n"
+    affinity: ''
+    alias: ''
+    ant_separation: ant_separation
+    comment: "FUTURO: DOA con segundo PlutoSDR\nALGORITMO: MUSIC\nENTRADA: IQ del\
+      \ PlutoSDR RX\nSALIDA: angulo estimado \u2192 beam_angle_deg\nESTADO: DESHABILITADO\
+      \ hasta tener 2\xBA Pluto"
+    freq: center_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+  states:
+    _io_cache: "('DOA Estimator (MUSIC)', 'blk', [('sample_rate', '20000000'), ('ant_separation',\
+      \ '0.125'), ('freq', '2410000000')], [('0', 'complex', 1)], [('0', 'float',\
+      \ 1)], '\\n    FUTURO: Estimador DOA para segundo PlutoSDR receptor.\\n    \\\
+      n    Algoritmo: MUSIC (MUltiple SIgnal Classification)\\n    Entrada: se\xF1\
+      al IQ del PlutoSDR receptor\\n    Salida: angulo estimado en radianes \u2192\
+      \ alimenta phase_shift\\n    \\n    Para habilitar:\\n    1. Conectar PlutoSDR\
+      \ RX a la entrada de este bloque\\n    2. Conectar salida a variable beam_angle_deg\\\
+      n    3. El slider pasa a modo visualizacion\\n    \\n    Separacion antenas\
+      \ RX: lambda = 12.5 cm @ 2.4 GHz\\n    ', ['ant_separation', 'sample_rate'])"
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1960, 240.0]
+    rotation: 0
+    state: disabled
+- name: doa_music_rx
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    Estimador DOA MUSIC para ULA de 2 elementos.\n\n    Entradas:\n\
+      \        in0 (complex): se\xF1al RX antena 1 (referencia)\n        in1 (complex):\
+      \ se\xF1al RX antena 2 (desfasada)\n\n    Salida:\n        out0 (float): angulo\
+      \ DOA estimado en GRADOS\n\n    Algoritmo MUSIC simplificado para 2 elementos:\n\
+      \        - Calcula matriz de correlacion cruzada\n        - Estima angulo por\
+      \ maxima correlacion\n        - Suavizado exponencial para estabilidad\n\n \
+      \   Para arrays mayores usar scipy/numpy eigendec completo.\n    \"\"\"\n\n\
+      \    def __init__(self, sample_rate=20000000, ant_separation=0.0625,\n     \
+      \            freq=2410000000, smooth=0.05, block_size=1024):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='DOA MUSIC 2-element',\n            in_sig=[np.complex64,\
+      \ np.complex64],\n            out_sig=[np.float32],\n        )\n        self.sample_rate\
+      \   = sample_rate\n        self.ant_sep       = ant_separation\n        self.wavelength\
+      \    = 3e8 / freq\n        self.smooth        = smooth          # coef. suavizado\
+      \ EMA\n        self.block_size    = block_size\n        self.set_output_multiple(block_size)\n\
+      \n        # Grilla de angulos de busqueda\n        self.angles_deg  = np.linspace(-90,\
+      \ 90, 361)\n        self.angles_rad  = np.radians(self.angles_deg)\n\n     \
+      \   # Vectores steering para cada angulo\n        self.d_over_lam  = ant_separation\
+      \ / self.wavelength\n        self.steering    = np.exp(\n            1j * 2\
+      \ * np.pi * self.d_over_lam * np.sin(self.angles_rad)\n        )  # shape (361,)\n\
+      \n        self.doa_smooth  = 0.0   # estado interno suavizado\n\n    def work(self,\
+      \ input_items, output_items):\n        n = self.block_size\n        x1 = input_items[0][:n]\n\
+      \        x2 = input_items[1][:n]\n\n        # \u2500\u2500 Matriz de correlacion\
+      \ cruzada (2x2) \u2500\u2500\n        r11 = np.mean(x1 * np.conj(x1)).real\n\
+      \        r12 = np.mean(x1 * np.conj(x2))\n        r21 = np.conj(r12)\n     \
+      \   r22 = np.mean(x2 * np.conj(x2)).real\n        R = np.array([[r11, r12],\n\
+      \                      [r21, r22]])\n\n        # \u2500\u2500 Eigendescomposicion\
+      \ \u2500\u2500\n        eigvals, eigvecs = np.linalg.eigh(R)\n        # Subespacio\
+      \ de ruido: eigenvector con menor eigenvalor\n        noise_vec = eigvecs[:,\
+      \ 0]  # shape (2,)\n\n        # \u2500\u2500 Pseudoespectro MUSIC \u2500\u2500\
+      \n        # a(theta) = [1, exp(j*2pi*(d/lam)*sin(theta))]\n        a = np.stack([np.ones(361),\
+      \ self.steering], axis=0)  # (2, 361)\n        # P_music(theta) = 1 / |a^H *\
+      \ En * En^H * a|\n        En = noise_vec[:, np.newaxis]             # (2,1)\n\
+      \        proj = En @ En.conj().T                   # (2,2) noise projector\n\
+      \        denom = np.abs(\n            np.einsum('ij,jk,ki->i',\n           \
+      \           a.conj().T,   # (361,2)\n                      proj,          #\
+      \ (2,2)\n                      a)             # (2,361)\n        ) + 1e-12\n\
+      \        music_spectrum = 1.0 / denom              # (361,)\n\n        # \u2500\
+      \u2500 Pico del espectro \u2192 angulo estimado \u2500\u2500\n        peak_idx\
+      \  = int(np.argmax(music_spectrum))\n        doa_raw   = float(self.angles_deg[peak_idx])\n\
+      \n        # \u2500\u2500 Suavizado exponencial (EMA) \u2500\u2500\n        self.doa_smooth\
+      \ = (\n            self.smooth * doa_raw +\n            (1.0 - self.smooth)\
+      \ * self.doa_smooth\n        )\n\n        output_items[0][:n] = np.full(n, self.doa_smooth,\
+      \ dtype=np.float32)\n        return n\n"
+    affinity: ''
+    alias: ''
+    ant_separation: ant_separation
+    block_size: '1024'
+    comment: "DOA MUSIC 2 ELEMENTOS\nEntradas: RX1, RX2 del PlutoSDR sensor\nSalida:\
+      \ angulo en grados \u2192 beam_angle_deg\nSuavizado EMA=0.05 para estabilidad\n\
+      Grilla: -90 a +90 en 361 puntos (0.5 deg resolucion)"
+    freq: center_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+    smooth: '0.05'
+  states:
+    _io_cache: "('DOA MUSIC 2-element', 'blk', [('sample_rate', '20000000'), ('ant_separation',\
+      \ '0.0625'), ('freq', '2410000000'), ('smooth', '0.05'), ('block_size', '1024')],\
+      \ [('0', 'complex', 1), ('1', 'complex', 1)], [('0', 'float', 1)], '\\n    Estimador\
+      \ DOA MUSIC para ULA de 2 elementos.\\n\\n    Entradas:\\n        in0 (complex):\
+      \ se\xF1al RX antena 1 (referencia)\\n        in1 (complex): se\xF1al RX antena\
+      \ 2 (desfasada)\\n\\n    Salida:\\n        out0 (float): angulo DOA estimado\
+      \ en GRADOS\\n\\n    Algoritmo MUSIC simplificado para 2 elementos:\\n     \
+      \   - Calcula matriz de correlacion cruzada\\n        - Estima angulo por maxima\
+      \ correlacion\\n        - Suavizado exponencial para estabilidad\\n\\n    Para\
+      \ arrays mayores usar scipy/numpy eigendec completo.\\n    ', ['block_size',\
+      \ 'sample_rate', 'smooth'])"
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2416, 0.0]
+    rotation: 0
+    state: disabled
+- name: iio_pluto_sink_0
+  id: iio_fmcomms2_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    attenuation1: '10'
+    attenuation2: '10.0'
+    bandwidth: samp_rate
+    buffer_size: '32768'
+    comment: "PLUTOSDR+ TX - DESHABILITADO (modo simulacion)\nPara transmitir con\
+      \ hardware:\n1) Cambiar state a enabled\n2) Deshabilitar throttle_ant1\n3) Cambiar\
+      \ URI: ip:192.168.2.1 o usb:1.X.X\nCanal 0 \u2192 TX1 (Antena 1, fase 0)\nCanal\
+      \ 1 \u2192 TX2 (Antena 2, fase phi)"
+    cyclic: 'False'
+    filter: ''
+    filter_source: '''Auto'''
+    fpass: '0'
+    frequency: center_freq
+    fstop: '0'
+    len_tag_key: ''
+    rf_port_select: '''A'''
+    samplerate: samp_rate
+    tx1_en: 'True'
+    tx2_en: 'True'
+    type: fc32
+    uri: ip:192.168.2.1
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 500.0]
+    rotation: 0
+    state: enabled
+- name: iio_pluto_source_rx
+  id: iio_pluto_source
+  parameters:
+    affinity: ''
+    alias: ''
+    bandwidth: samp_rate
+    bbdc: 'True'
+    buffer_size: '32768'
+    comment: "PLUTOSDR+ SENSOR RX\nURI: ip:192.168.3.1 (segundo Pluto \u2014 ajustar)\n\
+      Canal 0 \u2192 RX1 (Antena ref, fase 0)\nCanal 1 \u2192 RX2 (Antena desfasada,\
+      \ fase phi_rx)\nCoherencia garantizada por hardware PlutoSDR+"
+    filter: ''
+    filter_source: '''Auto'''
+    fpass: '0'
+    frequency: center_freq
+    fstop: '0'
+    gain1: '''slow_attack'''
+    len_tag_key: packet_len
+    manual_gain1: rx_gain
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    quadrature: 'True'
+    rfdc: 'True'
+    samplerate: samp_rate
+    type: fc32
+    uri: ip:192.168.3.1
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2200, -4.0]
+    rotation: 0
+    state: disabled
+- name: iio_pluto_source_single
+  id: iio_pluto_source
+  parameters:
+    affinity: ''
+    alias: ''
+    bandwidth: samp_rate
+    bbdc: 'True'
+    buffer_size: '32768'
+    comment: "PLUTOSDR RX SENSOR (1 canal)\nURI: ip:192.168.3.1 (ajustar)\nSolo RX1\
+      \ \u2014 antena direccional montada en servo\nEl DOA se estima por amplitud\
+      \ (RSSI), no por fase\nDeshabilitar en simulacion \u2014 usar rssi_sim en su\
+      \ lugar"
+    filter: ''
+    filter_source: '''Auto'''
+    fpass: '0'
+    frequency: center_freq
+    fstop: '0'
+    gain1: '''slow_attack'''
+    len_tag_key: packet_len
+    manual_gain1: rx_gain
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    quadrature: 'True'
+    rfdc: 'True'
+    samplerate: samp_rate
+    type: fc32
+    uri: ip:192.168.3.1
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1224, 820.0]
+    rotation: 0
+    state: enabled
+- name: import_math
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import math
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1576, 112.0]
+    rotation: 0
+    state: enabled
+- name: import_numpy
+  id: import
+  parameters:
+    alias: np
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1576, 48.0]
+    rotation: 0
+    state: enabled
+- name: multiply_const_ant1
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'ANTENA 1
+
+      Fase = 0 grados (referencia)
+
+      Sin modificacion de fase'
+    const: '1.0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 600.0]
+    rotation: 0
+    state: enabled
+- name: multiply_const_ant2
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'ANTENA 2
+
+      Aplica desfase de beamforming:
+
+      phi = 2*pi*sin(theta)
+
+      Controlado por slider (futuro: DOA)'
+    const: np.exp(1j * phase_shift)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [432, 888.0]
+    rotation: 0
+    state: enabled
+- name: null_steering_tx
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    Null Steering para ULA de 2 antenas TX.\n\n    Modifica los\
+      \ pesos de las dos antenas TX para\n    colocar un nulo en la direccion null_angle_deg.\n\
+      \n    Entradas:\n        in0 (complex): se\xF1al TX (chirp) para antena 1\n\
+      \        in1 (complex): se\xF1al TX (chirp) para antena 2 (pre-beamforming)\n\
+      \n    Salidas:\n        out0 (complex): se\xF1al antena 1 con peso null steering\n\
+      \        out1 (complex): se\xF1al antena 2 con peso null steering\n\n    El\
+      \ null steering se combina con el beamforming previo:\n    w_null = I - a*a^H/||a||^2\n\
+      \    w_beam = [1, exp(j*phi)]\n    w_total = w_null * w_beam\n    \"\"\"\n\n\
+      \    def __init__(self, sample_rate=20000000, ant_separation=0.0625,\n     \
+      \            freq=2410000000, null_angle_deg=0.0, beam_angle_deg=0.0):\n   \
+      \     gr.sync_block.__init__(\n            self,\n            name='Null Steering\
+      \ 2-ant',\n            in_sig=[np.complex64, np.complex64],\n            out_sig=[np.complex64,\
+      \ np.complex64],\n        )\n        self.ant_sep     = ant_separation\n   \
+      \     self.wavelength  = 3e8 / freq\n        self.null_angle  = null_angle_deg\n\
+      \        self.beam_angle  = beam_angle_deg\n        self._update_weights()\n\
+      \n    def _update_weights(self):\n        d_lam = self.ant_sep / self.wavelength\n\
+      \        # Steering vector beamforming\n        phi_beam = 2 * np.pi * d_lam\
+      \ * np.sin(np.radians(self.beam_angle))\n        a_beam   = np.array([1.0, np.exp(1j\
+      \ * phi_beam)])\n\n        # Steering vector null\n        phi_null = 2 * np.pi\
+      \ * d_lam * np.sin(np.radians(self.null_angle))\n        a_null   = np.array([1.0,\
+      \ np.exp(1j * phi_null)])\n\n        # Proyector ortogonal al nulo\n       \
+      \ # P_null = I - a_null * a_null^H / ||a_null||^2\n        P_null = np.eye(2)\
+      \ - np.outer(a_null, a_null.conj()) / np.dot(a_null, a_null.conj()).real\n\n\
+      \        # Pesos finales\n        w = P_null @ a_beam\n        # Normalizar\
+      \ para mantener potencia\n        norm = np.linalg.norm(w)\n        if norm\
+      \ > 1e-9:\n            w = w / norm\n        self.w0 = np.complex64(w[0])\n\
+      \        self.w1 = np.complex64(w[1])\n\n    def set_null_angle_deg(self, val):\n\
+      \        self.null_angle = float(val)\n        self._update_weights()\n\n  \
+      \  def set_beam_angle_deg(self, val):\n        self.beam_angle = float(val)\n\
+      \        self._update_weights()\n\n    def work(self, input_items, output_items):\n\
+      \        n = len(output_items[0])\n        output_items[0][:n] = input_items[0][:n]\
+      \ * self.w0\n        output_items[1][:n] = input_items[1][:n] * self.w1\n  \
+      \      return n\n"
+    affinity: ''
+    alias: ''
+    ant_separation: ant_separation
+    beam_angle_deg: beam_angle_deg
+    comment: 'NULL STEERING TX
+
+      Combina beamforming + null steering
+
+      w_total = P_null * w_beam
+
+      null_angle_deg: controlado por slider
+
+      beam_angle_deg: del DOA automatico o slider manual'
+    freq: center_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    null_angle_deg: '0.0'
+    sample_rate: samp_rate
+  states:
+    _io_cache: "('Null Steering 2-ant', 'blk', [('sample_rate', '20000000'), ('ant_separation',\
+      \ '0.0625'), ('freq', '2410000000'), ('null_angle_deg', '0.0'), ('beam_angle_deg',\
+      \ '0.0')], [('0', 'complex', 1), ('1', 'complex', 1)], [('0', 'complex', 1),\
+      \ ('1', 'complex', 1)], '\\n    Null Steering para ULA de 2 antenas TX.\\n\\\
+      n    Modifica los pesos de las dos antenas TX para\\n    colocar un nulo en\
+      \ la direccion null_angle_deg.\\n\\n    Entradas:\\n        in0 (complex): se\xF1\
+      al TX (chirp) para antena 1\\n        in1 (complex): se\xF1al TX (chirp) para\
+      \ antena 2 (pre-beamforming)\\n\\n    Salidas:\\n        out0 (complex): se\xF1\
+      al antena 1 con peso null steering\\n        out1 (complex): se\xF1al antena\
+      \ 2 con peso null steering\\n\\n    El null steering se combina con el beamforming\
+      \ previo:\\n    w_null = I - a*a^H/||a||^2\\n    w_beam = [1, exp(j*phi)]\\\
+      n    w_total = w_null * w_beam\\n    ', [])"
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1960, 96.0]
+    rotation: 0
+    state: disabled
+- name: probe_doa
+  id: blocks_probe_signal_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Lee angulo DOA del estimador MUSIC.
+
+      La variable beam_angle_deg se actualiza
+
+      via callback cada 100 ms.'
+    type: float
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2200, 368.0]
+    rotation: 0
+    state: disabled
+- name: probe_doa_servo
+  id: blocks_probe_signal_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Probe para leer DOA del servo tracker
+
+      Alimenta beam_angle_deg TX automaticamente
+
+      10 Hz de refresco'
+    type: float
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2048, 920.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_freq_sink_rx
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '0.2'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"cyan"'
+    color10: '"dark blue"'
+    color2: '"magenta"'
+    color3: '"yellow"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: 'ESPECTRO RX - Sensor DOA
+
+      Cyan=RX1(ref), Magenta=RX2(desfasada)
+
+      Permite verificar coherencia entre canales'
+    ctrlpanel: 'False'
+    fc: center_freq
+    fftsize: '4096'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: ''
+    label: Espectro RX Sensor
+    label1: RX1 (ref)
+    label10: ''
+    label2: RX2 (phi)
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"Sensor RX - DOA 2.400-2.420 GHz"'
+    nconnections: '2'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.1'
+    width1: '2'
+    width10: '1'
+    width2: '2'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2200, 232.0]
+    rotation: 0
+    state: disabled
+- name: qtgui_freq_sink_x_0
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '0.2'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"yellow"'
+    color10: '"dark blue"'
+    color2: '"cyan"'
+    color3: '"magenta"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: 'VISUALIZACION ESPECTRO
+
+      Muestra el chirp en tiempo real
+
+      Amarillo=Ant1, Cyan=Ant2'
+    ctrlpanel: 'False'
+    fc: center_freq
+    fftsize: '4096'
+    freqhalf: 'True'
+    grid: 'True'
+    gui_hint: ''
+    label: Espectro TX
+    label1: Antena 1
+    label10: ''
+    label2: Antena 2
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '"Chirp Sweep - Barrido 2.400-2.420 GHz"'
+    nconnections: '2'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.1'
+    width1: '2'
+    width10: '1'
+    width2: '2'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 856.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_number_sink_doa
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'False'
+    avg: '0.1'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: 'DISPLAY ANGULO DOA
+
+      Muestra en tiempo real el angulo estimado
+
+      por el algoritmo MUSIC'
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: 1,0,1,2
+    label1: DOA Estimado (grados)
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '90'
+    min: '-90'
+    name: '"Direccion de Llegada WiFi"'
+    nconnections: '1'
+    type: float
+    unit1: deg
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2416, 144.0]
+    rotation: 0
+    state: disabled
+- name: qtgui_number_sink_servo_doa
+  id: qtgui_number_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    autoscale: 'False'
+    avg: '0.1'
+    color1: ("black", "black")
+    color10: ("black", "black")
+    color2: ("black", "black")
+    color3: ("black", "black")
+    color4: ("black", "black")
+    color5: ("black", "black")
+    color6: ("black", "black")
+    color7: ("black", "black")
+    color8: ("black", "black")
+    color9: ("black", "black")
+    comment: 'DOA estimado por barrido servo
+
+      Actualizado cada semiciclo de barrido'
+    factor1: '1'
+    factor10: '1'
+    factor2: '1'
+    factor3: '1'
+    factor4: '1'
+    factor5: '1'
+    factor6: '1'
+    factor7: '1'
+    factor8: '1'
+    factor9: '1'
+    graph_type: qtgui.NUM_GRAPH_HORIZ
+    gui_hint: 2,0,1,2
+    label1: DOA Servo (grados)
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    max: '90'
+    min: '-90'
+    name: '"DOA por Barrido Servo"'
+    nconnections: '1'
+    type: float
+    unit1: deg
+    unit10: ''
+    unit2: ''
+    unit3: ''
+    unit4: ''
+    unit5: ''
+    unit6: ''
+    unit7: ''
+    unit8: ''
+    unit9: ''
+    update_time: '0.10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2040, 728.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_time_sink_scan
+  id: qtgui_time_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
+    comment: ''
+    ctrlpanel: 'False'
+    entags: 'True'
+    grid: 'True'
+    gui_hint: ''
+    label1: Angle (deg)
+    label10: Signal 10
+    label2: RSSI (dB)
+    label3: Signal 3
+    label4: Signal 4
+    label5: Signal 5
+    label6: Signal 6
+    label7: Signal 7
+    label8: Signal 8
+    label9: Signal 9
+    legend: 'True'
+    marker1: '-1'
+    marker10: '-1'
+    marker2: '-1'
+    marker3: '-1'
+    marker4: '-1'
+    marker5: '-1'
+    marker6: '-1'
+    marker7: '-1'
+    marker8: '-1'
+    marker9: '-1'
+    name: "\"Barrido: \xE1ngulo y RSSI\""
+    nconnections: '2'
+    size: '1024'
+    srate: samp_rate
+    stemplot: 'False'
+    style1: '1'
+    style10: '1'
+    style2: '1'
+    style3: '1'
+    style4: '1'
+    style5: '1'
+    style6: '1'
+    style7: '1'
+    style8: '1'
+    style9: '1'
+    tr_chan: '0'
+    tr_delay: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: float
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    ylabel: Amplitude
+    ymax: '1'
+    ymin: '-1'
+    yunit: '""'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1312, 216.0]
+    rotation: 0
+    state: enabled
+- name: rssi_real
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    \"\"\"\n    Medidor de RSSI real a partir de muestras IQ del PlutoSDR.\n\
+      \n    Calcula la potencia media en dB de cada bloque de muestras:\n        RSSI_dB\
+      \ = 10*log10(mean(|x|^2) + eps)\n\n    Entrada:  IQ del PlutoSDR RX (complex64)\n\
+      \    Salida:   RSSI en dBFS (float32)\n\n    Uso: conectar salida al rssi_best_tracker\
+      \ para\n    combinar con el angulo actual del servo.\n    \"\"\"\n\n    def\
+      \ __init__(self, block_size=1024, smooth=0.2):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='RSSI Meter (dBFS)',\n            in_sig=[np.complex64],\n\
+      \            out_sig=[np.float32],\n        )\n        self.block_size = block_size\n\
+      \        self.smooth     = smooth        # EMA\n        self.set_output_multiple(block_size)\n\
+      \        self._rssi_smooth = -100.0\n\n    def work(self, input_items, output_items):\n\
+      \        n = self.block_size\n        x = input_items[0][:n]\n        power\
+      \ = float(np.mean(np.abs(x)**2))\n        rssi_raw = 10.0 * np.log10(max(power,\
+      \ 1e-12))\n        self._rssi_smooth = (\n            self.smooth * rssi_raw\
+      \ +\n            (1.0 - self.smooth) * self._rssi_smooth\n        )\n      \
+      \  output_items[0][:n] = np.full(n, self._rssi_smooth, dtype=np.float32)\n \
+      \       return n\n"
+    affinity: ''
+    alias: ''
+    block_size: '1024'
+    comment: 'RSSI REAL desde PlutoSDR RX
+
+      Calcula potencia en dBFS de las muestras IQ
+
+      Suavizado EMA=0.2
+
+      Habilitar con iio_pluto_source_single
+
+      En simulacion usar rssi_sim en su lugar'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    smooth: '0.2'
+  states:
+    _io_cache: '(''RSSI Meter (dBFS)'', ''blk'', [(''block_size'', ''1024''), (''smooth'',
+      ''0.2'')], [(''0'', ''complex'', 1)], [(''0'', ''float'', 1)], ''\n    Medidor
+      de RSSI real a partir de muestras IQ del PlutoSDR.\n\n    Calcula la potencia
+      media en dB de cada bloque de muestras:\n        RSSI_dB = 10*log10(mean(|x|^2)
+      + eps)\n\n    Entrada:  IQ del PlutoSDR RX (complex64)\n    Salida:   RSSI en
+      dBFS (float32)\n\n    Uso: conectar salida al rssi_best_tracker para\n    combinar
+      con el angulo actual del servo.\n    '', [''block_size'', ''smooth''])'
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1472, 888.0]
+    rotation: 0
+    state: enabled
+- name: rssi_sim
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\nimport math\nimport\
+      \ random\nimport time\n\nclass blk(gr.sync_block):\n    \"\"\"Simulated RSSI\
+      \ as a function of antenna pointing angle.\n\n    Input:  angle_deg (float)\n\
+      \    Output: rssi_db (float)\n\n    Pattern: Gaussian mainlobe centered at src_angle_deg\
+      \ with approximate beamwidth.\n    Adds random noise. Also prints best-angle\
+      \ tracking periodically.\n    \"\"\"\n\n    def __init__(self, src_angle_deg=15.0,\
+      \ beamwidth_deg=35.0, peak_db=-10.0, noise_std_db=1.5, print_hz=2.0):\n    \
+      \    gr.sync_block.__init__(\n            self,\n            name='RSSI Simulator\
+      \ (dB)',\n            in_sig=[np.float32],\n            out_sig=[np.float32],\n\
+      \        )\n        self.src = float(src_angle_deg)\n        self.bw = float(beamwidth_deg)\n\
+      \        self.peak = float(peak_db)\n        self.noise_std = float(noise_std_db)\n\
+      \n        # sigma so that -3 dB roughly at +/- bw/2\n        self.sigma = (self.bw/2.0)\
+      \ / math.sqrt(2.0*math.log(2.0))\n\n        self.best_rssi = -1e9\n        self.best_angle\
+      \ = 0.0\n        self._t_last = time.time()\n        self._print_dt = 1.0 /\
+      \ max(float(print_hz), 0.1)\n\n    def work(self, input_items, output_items):\n\
+      \        ang = input_items[0]\n        out = output_items[0]\n        n = min(len(ang),\
+      \ len(out))\n        for i in range(n):\n            a = float(ang[i])\n   \
+      \         g = math.exp(-0.5 * ((a - self.src) / self.sigma) ** 2)  # 0..1\n\
+      \            rssi = self.peak + 20.0*math.log10(max(g, 1e-6)) + random.gauss(0.0,\
+      \ self.noise_std)\n\n            out[i] = np.float32(rssi)\n\n            if\
+      \ rssi > self.best_rssi:\n                self.best_rssi = rssi\n          \
+      \      self.best_angle = a\n\n        now = time.time()\n        if now - self._t_last\
+      \ >= self._print_dt:\n            self._t_last = now\n            print(f\"\
+      [SCAN] best_angle\u2248{self.best_angle:6.1f} deg | best_rssi\u2248{self.best_rssi:6.1f}\
+      \ dB\")\n\n        return n"
+    affinity: ''
+    alias: ''
+    beamwidth_deg: '35'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_std_db: '1.5'
+    peak_db: '-10'
+    print_hz: '2.0'
+    src_angle_deg: src_angle_deg
+  states:
+    _io_cache: '(''RSSI Simulator (dB)'', ''blk'', [(''src_angle_deg'', ''15.0''),
+      (''beamwidth_deg'', ''35.0''), (''peak_db'', ''-10.0''), (''noise_std_db'',
+      ''1.5''), (''print_hz'', ''2.0'')], [(''0'', ''float'', 1)], [(''0'', ''float'',
+      1)], ''Simulated RSSI as a function of antenna pointing angle.\n\n    Input:  angle_deg
+      (float)\n    Output: rssi_db (float)\n\n    Pattern: Gaussian mainlobe centered
+      at src_angle_deg with approximate beamwidth.\n    Adds random noise. Also prints
+      best-angle tracking periodically.\n    '', [])'
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2200, 456.0]
+    rotation: 0
+    state: disabled
+- name: servo_df_tracker
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\nimport time\n\nclass\
+      \ blk(gr.sync_block):\n    \"\"\"\n    Servo DF Tracker: estima DOA por barrido\
+      \ de amplitud.\n\n    Principio: DF por amplitud (scan + max RSSI).\n    La\
+      \ antena se mueve de min_angle a max_angle (servo).\n    En cada posicion se\
+      \ mide el RSSI.\n    Al completar un semicilo se emite el angulo de maximo RSSI\n\
+      \    como estimacion DOA.\n\n    Entradas:\n        in0 (float): angulo actual\
+      \ del servo (grados)\n        in1 (float): RSSI en ese angulo (dBFS o dBm simulado)\n\
+      \n    Salida:\n        out0 (float): angulo DOA estimado (grados) \u2014 se\
+      \ actualiza\n                      al completar cada semicilo de barrido\n\n\
+      \    Parametros:\n        min_angle_deg: limite inferior del barrido\n     \
+      \   max_angle_deg: limite superior del barrido\n        hysteresis_db: cambio\
+      \ minimo de RSSI para actualizar DOA\n        smooth:        suavizado EMA del\
+      \ angulo de salida\n    \"\"\"\n\n    def __init__(self, min_angle_deg=-60.0,\
+      \ max_angle_deg=60.0,\n                 hysteresis_db=2.0, smooth=0.15):\n \
+      \       gr.sync_block.__init__(\n            self,\n            name='Servo\
+      \ DF Tracker',\n            in_sig=[np.float32, np.float32],\n            out_sig=[np.float32],\n\
+      \        )\n        self.min_a      = float(min_angle_deg)\n        self.max_a\
+      \      = float(max_angle_deg)\n        self.hyst       = float(hysteresis_db)\n\
+      \        self.smooth     = float(smooth)\n\n        # Historial del semiciclo\
+      \ actual\n        self._angles  = []\n        self._rssis   = []\n        self._prev_ang\
+      \ = None\n        self._direction = 1   # 1=subiendo, -1=bajando\n\n       \
+      \ # DOA estimado actual (suavizado)\n        self._doa_smooth = 0.0\n      \
+      \  self._best_rssi_cycle = -1e9\n\n        self._t_last_print = time.time()\n\
+      \n    def work(self, input_items, output_items):\n        angles = input_items[0]\n\
+      \        rssis  = input_items[1]\n        n = min(len(angles), len(rssis), len(output_items[0]))\n\
+      \n        for i in range(n):\n            ang  = float(angles[i])\n        \
+      \    rssi = float(rssis[i])\n\n            self._angles.append(ang)\n      \
+      \      self._rssis.append(rssi)\n\n            # Detectar inversion del servo\
+      \ (fin de semiciclo)\n            if self._prev_ang is not None:\n         \
+      \       delta = ang - self._prev_ang\n                if len(self._angles) >\
+      \ 3:\n                    if self._direction == 1 and delta < 0:\n         \
+      \               # Fin semiciclo ascendente \u2192 calcular DOA\n           \
+      \             self._direction = -1\n                        self._update_doa()\n\
+      \                    elif self._direction == -1 and delta > 0:\n           \
+      \             # Fin semiciclo descendente \u2192 calcular DOA\n            \
+      \            self._direction = 1\n                        self._update_doa()\n\
+      \            self._prev_ang = ang\n\n            output_items[0][i] = np.float32(self._doa_smooth)\n\
+      \n        return n\n\n    def _update_doa(self):\n        if len(self._rssis)\
+      \ < 3:\n            return\n        rs = np.array(self._rssis)\n        an =\
+      \ np.array(self._angles)\n        peak_idx = int(np.argmax(rs))\n        peak_rssi\
+      \ = rs[peak_idx]\n        peak_ang  = an[peak_idx]\n\n        # Solo actualizar\
+      \ si el pico supera umbral de hist\xE9resis\n        if peak_rssi > self._best_rssi_cycle\
+      \ - self.hyst:\n            self._best_rssi_cycle = peak_rssi\n            self._doa_smooth\
+      \ = (\n                self.smooth * peak_ang +\n                (1.0 - self.smooth)\
+      \ * self._doa_smooth\n            )\n            now = time.time()\n       \
+      \     if now - self._t_last_print > 0.5:\n                self._t_last_print\
+      \ = now\n                print(f\"[DF TRACKER] DOA estimado: {self._doa_smooth:6.1f}\
+      \ deg \"\n                      f\"| pico RSSI: {peak_rssi:6.1f} dB @ {peak_ang:.1f}\
+      \ deg\")\n\n        # Limpiar historial para el proximo semiciclo\n        self._angles\
+      \ = []\n        self._rssis  = []\n"
+    affinity: ''
+    alias: ''
+    comment: "SERVO DF TRACKER\nCombina angulo servo + RSSI \u2192 DOA estimado\n\
+      Detecta fin de semiciclo automaticamente\nEmite angulo de maximo RSSI por semiciclo\n\
+      Suavizado EMA=0.15 para estabilidad\nSalida \u2192 probe_doa_servo \u2192 beam_angle_deg\
+      \ TX"
+    hysteresis_db: '2.0'
+    max_angle_deg: '60.0'
+    maxoutbuf: '0'
+    min_angle_deg: '-60.0'
+    minoutbuf: '0'
+    smooth: '0.15'
+  states:
+    _io_cache: "('Servo DF Tracker', 'blk', [('min_angle_deg', '-60.0'), ('max_angle_deg',\
+      \ '60.0'), ('hysteresis_db', '2.0'), ('smooth', '0.15')], [('0', 'float', 1),\
+      \ ('1', 'float', 1)], [('0', 'float', 1)], '\\n    Servo DF Tracker: estima\
+      \ DOA por barrido de amplitud.\\n\\n    Principio: DF por amplitud (scan + max\
+      \ RSSI).\\n    La antena se mueve de min_angle a max_angle (servo).\\n    En\
+      \ cada posicion se mide el RSSI.\\n    Al completar un semicilo se emite el\
+      \ angulo de maximo RSSI\\n    como estimacion DOA.\\n\\n    Entradas:\\n   \
+      \     in0 (float): angulo actual del servo (grados)\\n        in1 (float): RSSI\
+      \ en ese angulo (dBFS o dBm simulado)\\n\\n    Salida:\\n        out0 (float):\
+      \ angulo DOA estimado (grados) \u2014 se actualiza\\n                      al\
+      \ completar cada semicilo de barrido\\n\\n    Parametros:\\n        min_angle_deg:\
+      \ limite inferior del barrido\\n        max_angle_deg: limite superior del barrido\\\
+      n        hysteresis_db: cambio minimo de RSSI para actualizar DOA\\n       \
+      \ smooth:        suavizado EMA del angulo de salida\\n    ', ['smooth'])"
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1664, 736.0]
+    rotation: 0
+    state: enabled
+- name: servo_serial_writer
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\ntry:\n    import serial\n\
+      \    _HAS_SERIAL = True\nexcept ImportError:\n    _HAS_SERIAL = False\nimport\
+      \ time\n\nclass blk(gr.sync_block):\n    \"\"\"\n    Servo Serial Writer: convierte\
+      \ angulo (grados) a pulso PWM\n    y lo envia por puerto serie a un Arduino/microcontrolador.\n\
+      \n    Protocolo: envia texto \"ANG:XXX.X\\n\" a la velocidad\n    configurada.\
+      \ El Arduino convierte a posicion de servo.\n\n    Ejemplo firmware Arduino:\n\
+      \        if (Serial.available()) {\n            String s = Serial.readStringUntil('\\\
+      n');\n            if (s.startsWith(\"ANG:\")) {\n                float ang =\
+      \ s.substring(4).toFloat();\n                int us = map(ang, -90, 90, 1000,\
+      \ 2000);\n                myServo.writeMicroseconds(us);\n            }\n  \
+      \      }\n\n    Parametros:\n        port:     puerto serie (ej: /dev/ttyUSB0\
+      \ o COM3)\n        baudrate: velocidad (default 115200)\n        min_us:   pulso\
+      \ minimo en microsegundos (default 1000)\n        max_us:   pulso maximo en\
+      \ microsegundos (default 2000)\n        rate_hz:  frecuencia maxima de envio\
+      \ (default 50 Hz)\n    \"\"\"\n\n    def __init__(self, port='/dev/ttyUSB0',\
+      \ baudrate=115200,\n                 min_us=1000, max_us=2000, rate_hz=50.0):\n\
+      \        gr.sync_block.__init__(\n            self,\n            name='Servo\
+      \ Serial Writer',\n            in_sig=[np.float32],\n            out_sig=None,\n\
+      \        )\n        self.port     = port\n        self.baudrate = baudrate\n\
+      \        self.min_us   = float(min_us)\n        self.max_us   = float(max_us)\n\
+      \        self._dt      = 1.0 / max(float(rate_hz), 1.0)\n        self._t_last\
+      \  = 0.0\n        self._ser     = None\n\n        if _HAS_SERIAL:\n        \
+      \    try:\n                self._ser = serial.Serial(port, baudrate, timeout=0.1)\n\
+      \                print(f\"[SERVO] Puerto abierto: {port} @ {baudrate} baud\"\
+      )\n            except Exception as e:\n                print(f\"[SERVO] Error\
+      \ abriendo {port}: {e}\")\n                print(\"[SERVO] Modo simulacion:\
+      \ angulos por consola\")\n        else:\n            print(\"[SERVO] pyserial\
+      \ no disponible. Instalar: pip install pyserial\")\n            print(\"[SERVO]\
+      \ Modo simulacion: angulos por consola\")\n\n    def work(self, input_items,\
+      \ output_items):\n        angles = input_items[0]\n        n = len(angles)\n\
+      \n        now = time.time()\n        if now - self._t_last < self._dt:\n   \
+      \         return n   # rate limiting\n\n        self._t_last = now\n       \
+      \ ang = float(angles[-1])  # ultimo angulo del buffer\n\n        # Clamp a rango\
+      \ fisico del servo (-90 a +90)\n        ang_clamped = max(-90.0, min(90.0, ang))\n\
+      \n        # Calcular pulso PWM\n        t = (ang_clamped + 90.0) / 180.0   #\
+      \ 0..1\n        pulse_us = self.min_us + t * (self.max_us - self.min_us)\n\n\
+      \        msg = f\"ANG:{ang_clamped:.1f}\\n\"\n\n        if self._ser and self._ser.is_open:\n\
+      \            try:\n                self._ser.write(msg.encode())\n         \
+      \   except Exception as e:\n                print(f\"[SERVO] Error escritura:\
+      \ {e}\")\n        else:\n            # Simulacion: solo consola cada 0.5s\n\
+      \            print(f\"[SERVO SIM] {ang_clamped:6.1f} deg | {pulse_us:.0f} us\"\
+      )\n\n        return n\n\n    def stop(self):\n        if self._ser and self._ser.is_open:\n\
+      \            self._ser.close()\n            print(\"[SERVO] Puerto cerrado\"\
+      )\n        return True\n"
+    affinity: ''
+    alias: ''
+    baudrate: '115200'
+    comment: "SERVO SERIAL WRITER\nConvierte angulo \u2192 pulso PWM \u2192 Arduino\
+      \ \u2192 Servo\nProtocolo: \"ANG:XXX.X\\n\" por serie\nPuerto: /dev/ttyUSB0\
+      \ (Linux) o COM3 (Windows)\nRequiere: pip install pyserial\nSin serial \u2192\
+      \ modo consola (simulacion)\nVer docstring para firmware Arduino"
+    max_us: '2000'
+    maxoutbuf: '0'
+    min_us: '1000'
+    minoutbuf: '0'
+    port: /dev/ttyUSB0
+    rate_hz: '50.0'
+  states:
+    _io_cache: '(''Servo Serial Writer'', ''blk'', [(''port'', "''/dev/ttyUSB0''"),
+      (''baudrate'', ''115200''), (''min_us'', ''1000''), (''max_us'', ''2000''),
+      (''rate_hz'', ''50.0'')], [(''0'', ''float'', 1)], [], ''\n    Servo Serial
+      Writer: convierte angulo (grados) a pulso PWM\n    y lo envia por puerto serie
+      a un Arduino/microcontrolador.\n\n    Protocolo: envia texto "ANG:XXX.X\n" a
+      la velocidad\n    configurada. El Arduino convierte a posicion de servo.\n\n    Ejemplo
+      firmware Arduino:\n        if (Serial.available()) {\n            String s =
+      Serial.readStringUntil(\''\n\'');\n            if (s.startsWith("ANG:")) {\n                float
+      ang = s.substring(4).toFloat();\n                int us = map(ang, -90, 90,
+      1000, 2000);\n                myServo.writeMicroseconds(us);\n            }\n        }\n\n    Parametros:\n        port:     puerto
+      serie (ej: /dev/ttyUSB0 o COM3)\n        baudrate: velocidad (default 115200)\n        min_us:   pulso
+      minimo en microsegundos (default 1000)\n        max_us:   pulso maximo en microsegundos
+      (default 2000)\n        rate_hz:  frecuencia maxima de envio (default 50 Hz)\n    '',
+      [''baudrate'', ''max_us'', ''min_us'', ''port''])'
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1512, 448.0]
+    rotation: 0
+    state: enabled
+- name: throttle_angle
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Throttle para que el barrido vaya a 'ui_rate' Hz.
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: ui_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1280, 648.0]
+    rotation: 0
+    state: enabled
+- name: throttle_ant1
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'SIMULACION: habilitado
+
+      Comentar/deshabilitar al usar PlutoSDR real
+
+      Limita CPU en simulacion'
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1960, 0.0]
+    rotation: 0
+    state: disabled
+
+connections:
+- [chirp_source, '0', multiply_const_ant1, '0']
+- [chirp_source, '0', multiply_const_ant2, '0']
+- [iio_pluto_source_single, '0', rssi_real, '0']
+- [multiply_const_ant1, '0', iio_pluto_sink_0, '0']
+- [multiply_const_ant1, '0', qtgui_freq_sink_x_0, '0']
+- [multiply_const_ant2, '0', iio_pluto_sink_0, '1']
+- [multiply_const_ant2, '0', qtgui_freq_sink_x_0, '1']
+- [rssi_real, '0', servo_df_tracker, '1']
+- [servo_df_tracker, '0', probe_doa_servo, '0']
+- [servo_df_tracker, '0', qtgui_number_sink_servo_doa, '0']
+- [throttle_angle, '0', servo_df_tracker, '0']
+- [throttle_angle, '0', servo_serial_writer, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.12.0
