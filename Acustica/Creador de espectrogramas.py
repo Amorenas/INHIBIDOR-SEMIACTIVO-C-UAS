@@ -1,9 +1,8 @@
 import sounddevice as sd
 import numpy as np
-import librosa
-import librosa.display
 import matplotlib.pyplot as plt
 import soundfile as sf
+from scipy.signal import stft
 
 # =========================
 # CONFIGURACION
@@ -33,32 +32,30 @@ sf.write(ARCHIVO_AUDIO, audio, FS)
 # ANALISIS ESPECTRAL
 # =========================
 
-y, sr = librosa.load(ARCHIVO_AUDIO, sr=FS)
+# Cargar audio con soundfile (sin librosa/numba)
+y, sr = sf.read(ARCHIVO_AUDIO)
+if y.ndim > 1:
+    y = y[:, 0]  # convertir a mono si es necesario
 
-S = librosa.stft(y)
+# Calcular STFT con scipy
+frecuencias, tiempos, Zxx = stft(y, fs=sr, nperseg=2048)
 
-S_db = librosa.amplitude_to_db(np.abs(S))
+# Convertir a dB
+S_db = 20 * np.log10(np.abs(Zxx) + 1e-10)
 
 # =========================
 # CREAR ESPECTROGRAMA
 # =========================
 
-plt.figure(figsize=(12,6))
+plt.figure(figsize=(12, 6))
 
-librosa.display.specshow(
-    S_db,
-    sr=sr,
-    x_axis="time",
-    y_axis="hz",
-    cmap="magma"
-)
+plt.pcolormesh(tiempos, frecuencias, S_db, shading='gouraud', cmap='magma')
 
-plt.ylim(0,10000)
+plt.ylim(0, 10000)
 
 plt.colorbar(label="dB")
 
 plt.title("Espectrograma acústico UAV")
-
 plt.xlabel("Tiempo (s)")
 plt.ylabel("Frecuencia (Hz)")
 
