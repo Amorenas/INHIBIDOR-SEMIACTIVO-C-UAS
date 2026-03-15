@@ -815,7 +815,7 @@ footer {
 <!-- ══ TOP STRIPE ══ -->
 <div class="top-stripe">
   <span>Ministerio de Defensa · Universidad de Vigo</span>
-  <span>cud.uvigo.es &nbsp;|&nbsp; gerente@cud.uvigo.es &nbsp;|&nbsp; 986 804 900</span>
+  <span>cud.uvigo.es &nbsp;|&nbsp; <a href="mailto:nicolas.garciaamorena@gmail.com">nicolas.garciaamorena@gmail.com</a> &nbsp;|&nbsp; 986 804 900</span>
 </div>
 
 <!-- ══ SITE HEADER ══ -->
@@ -860,17 +860,19 @@ footer {
     <span class="doc-tag">EW Táctica · EMCON</span>
     <span class="doc-tag">Detección Acústica</span>
     <span class="doc-tag">ML sobre RF</span>
-    <span class="doc-tag">Actualizado: Feb 2026</span>
+    <span class="doc-tag">Fusión Multisensor</span>
+    <span class="doc-tag">Ciberseguridad UAS</span>
+    <span class="doc-tag">Actualizado: Mar 2026</span>
   </div>
 </div>
 
 <!-- ══ STATS ══ -->
 <div class="stats">
-  <div class="stat"><span class="stat-n">33</span><span class="stat-l">Fuentes totales</span></div>
-  <div class="stat"><span class="stat-n">15</span><span class="stat-l">Refs. técnicas</span></div>
-  <div class="stat"><span class="stat-n">18</span><span class="stat-l">Recursos abiertos</span></div>
+  <div class="stat"><span class="stat-n">57</span><span class="stat-l">Fuentes totales</span></div>
+  <div class="stat"><span class="stat-n">44</span><span class="stat-l">Refs. técnicas</span></div>
+  <div class="stat"><span class="stat-n">13</span><span class="stat-l">Recursos abiertos</span></div>
   <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Acceso libre</span></div>
-  <div class="stat"><span class="stat-n">2020–25</span><span class="stat-l">Rango temporal</span></div>
+  <div class="stat"><span class="stat-n">2017–25</span><span class="stat-l">Rango temporal</span></div>
 </div>
 
 <!-- ════════════ PANEL I: BIBLIOGRAFÍA ════════════ -->
@@ -1201,6 +1203,146 @@ footer {
       </div>
     </div>
 
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">16</div>
+        <div>
+          <div class="rcard-title">Small UAS Online Audio DOA Estimation and Real-Time Identification Using Machine Learning</div>
+          <div class="rcard-meta">Kyritsis, A. et al. · Sensors MDPI 22(22), 8659 · 2022 · doi:10.3390/s22228659</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Sistema en tiempo real que combina estimación de DOA acústico y clasificación de UAS mediante ML embebido. Directamente aplicable al nodo sensor con array MA-USB8: combina en un único pipeline las funciones de localización angular y clasificación del tipo de UAS que el sistema semiactivo requiere antes de activar el bloque ECM.</div>
+        <div class="tags"><span class="tag tag-acus">DOA Acústico</span><span class="tag tag-ml">ML Tiempo Real</span><span class="tag tag-acus">Array</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:92%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s22228659" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">17</div>
+        <div>
+          <div class="rcard-title">UAV Noise Emission — A Combined Experimental and Numerical Assessment</div>
+          <div class="rcard-meta">Cussen, K. et al. · Acoustics MDPI 4(2), 297–312 · 2022 · doi:10.3390/acoustics4020018</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Caracterización experimental y numérica del ruido emitido por UAVs multirrotor. Analiza la directividad y el espectro de la firma acústica en función de las RPM, geometría de hélice y carenado. Fundamento para el modelo físico S(t) = ΣₘΣₖ A·cos(2πkf₀,ₘt) y para comprender por qué el carenado del DJI Avata 2 actúa como guía de onda.</div>
+        <div class="tags"><span class="tag tag-acus">Firma acústica</span><span class="tag tag-acus">BPF</span><span class="tag tag-acus">Directividad</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:82%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/acoustics4020018" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">18</div>
+        <div>
+          <div class="rcard-title">Outdoor Microphone Range Tests and Spectral Analysis of UAV Acoustic Signatures for Array Development</div>
+          <div class="rcard-meta">Jekateryńczuk, G. &amp; Piotrowski, Z. · Sensors MDPI 25(22), 7057 · 2025 · doi:10.3390/s25227057</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Ensayos de campo con arrays de micrófonos para capturar firmas acústicas de UAVs en exterior. Analiza evolución espectral con la distancia y condiciones ambientales. Referencia directa para el diseño del array MA-USB8 y para justificar los parámetros F_LOW/F_HIGH=3–6 kHz del detector acústico del sistema.</div>
+        <div class="tags"><span class="tag tag-acus">Array exterior</span><span class="tag tag-acus">Firma espectral</span><span class="tag tag-acus">Alcance</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:86%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s25227057" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">19</div>
+        <div>
+          <div class="rcard-title">Outdoor Sound Source Detection Using a Quadcopter with Microphone Array</div>
+          <div class="rcard-meta">Ohata, T. et al. · Journal of Robotics and Mechatronics 29(1), 177–187 · 2017 · doi:10.20965/jrm.2017.p0177</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Demostración temprana de array de micrófonos embarcado en cuadricóptero para localización de fuentes sonoras en exterior. Metodología de DOA acústico en plataforma móvil aplicable a la estimación de azimut con el array MA-USB8 y al módulo Consola_DOA_MAUSB8.py del sistema.</div>
+        <div class="tags"><span class="tag tag-acus">DOA exterior</span><span class="tag tag-acus">Array embarcado</span><span class="tag tag-acus">Localización</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:74%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.20965/jrm.2017.p0177" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">20</div>
+        <div>
+          <div class="rcard-title">DREGON: Dataset and Methods for UAV-Embedded Sound Source Localization</div>
+          <div class="rcard-meta">Strauss, M. et al. · IEEE/RSJ IROS 2018, pp. 1–8 · doi:10.1109/IROS.2018.8593581</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Dataset y metodología de referencia para localización de fuentes sonoras embarcada en UAV. Presenta condiciones acústicas adversas producidas por el propio rotor durante el vuelo y técnicas de supresión del ruido de autopropulsión. Útil para comprender las limitaciones del canal acústico en presencia de ruido de fondo estructural.</div>
+        <div class="tags"><span class="tag tag-acus">DREGON Dataset</span><span class="tag tag-ml">SSL</span><span class="tag tag-acus">Ruido rotor</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:72%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.1109/iros.2018.8593581" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">21</div>
+        <div>
+          <div class="rcard-title">Acoustic Signature Measurement of Small Multi-Rotor Unmanned Aircraft Systems</div>
+          <div class="rcard-meta">Kloet, N. et al. · International Journal of Micro Air Vehicles 9(1), 3–14 · 2017 · doi:10.1177/1756829316681868</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Medición sistemática de firmas acústicas de UAS multirrotor en cámara anecoica y campo libre. Caracteriza el Blade Passage Frequency (BPF) y armónicos en función de número de palas y RPM. Fundamento experimental directo para el modelo f₀ = B·ω/2π implementado en el detector acústico del sistema.</div>
+        <div class="tags"><span class="tag tag-acus">BPF medido</span><span class="tag tag-acus">Armónicos</span><span class="tag tag-acus">Multirrotor</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:88%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.1177/1756829316681868" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">22</div>
+        <div>
+          <div class="rcard-title">DroneAudioset: An Audio Dataset for Drone-based Search and Rescue</div>
+          <div class="rcard-meta">Gupta, C. et al. · arXiv:2510.15383 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Dataset de audio para SAR con drones que incluye firmas acústicas en entornos reales con ruido de fondo variable. Complementa al dataset DADS (Hugging Face) utilizado en el entrenamiento del clasificador Random Forest del módulo cic_onefile.py. Amplia la variedad de perfiles UAV disponibles para generalización del modelo ML.</div>
+        <div class="tags"><span class="tag tag-acus">Dataset SAR</span><span class="tag tag-ml">Random Forest</span><span class="tag tag-acus">Ruido fondo</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:76%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2510.15383v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
   </div>
 
   <!-- SEC 05 -->
@@ -1227,6 +1369,751 @@ footer {
         <span class="rel-lbl">Relevancia</span>
         <div class="rel-bar"><div class="rel-fill" style="width:83%"></div></div>
         <a class="rcard-link" href="https://scholarsmine.mst.edu/ele_comeng_facwork" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml rf">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">23</div>
+        <div>
+          <div class="rcard-title">Small UAV Target Detection Algorithm Using YOLOv8n-RFL Based on Radar Detection Technology</div>
+          <div class="rcard-meta">Shi, Z. &amp; Lei, Z. · Sensors MDPI 25(16), 5140 · 2025 · doi:10.3390/s25165140</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Algoritmo de detección de pequeños UAV que combina radar y YOLOv8 con módulo RFL (radar feature learning). Demuestra que la fusión radar + ML supera ampliamente la detección monomodal en escenarios de bajo RCS. Referencia para la evolución del sistema hacia fusión multisensor con radar pasivo como capa adicional.</div>
+        <div class="tags"><span class="tag tag-ml">YOLOv8</span><span class="tag tag-rf">Radar</span><span class="tag tag-ml">Bajo RCS</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:72%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s25165140" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEC 06 -->
+  <div class="sec-hdr">
+    <span class="sec-num">06</span>
+    <span class="sec-name">Fusión Multisensor · Arquitectura C-UAS Cooperativa · Integración UTM</span>
+  </div>
+  <div class="grid">
+
+    <div class="rcard" data-cats="arch ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">24</div>
+        <div>
+          <div class="rcard-title">Deep Learning on Multi Sensor Data for Counter UAV Applications — A Systematic Review</div>
+          <div class="rcard-meta">Samaras, S. et al. · Sensors MDPI 19(22), 4837 · 2019 · doi:10.3390/s19224837</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión sistemática de técnicas de deep learning sobre datos multisensor (RF, acústico, EO/IR, radar) para C-UAS. Analiza modalidades de fusión (temprana, tardía e intermedia) y su impacto en fiabilidad y falsas alarmas. Marco teórico para la arquitectura de decisión escalonada ACINT+SIGINT con AND lógico implementada en el CIC del sistema.</div>
+        <div class="tags"><span class="tag tag-arch">Fusión multisensor</span><span class="tag tag-ml">Revisión DL</span><span class="tag tag-arch">Pipeline</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:91%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s19224837" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">25</div>
+        <div>
+          <div class="rcard-title">Multi-Sensory Data Fusion in Terms of UAV Detection in 3D Space</div>
+          <div class="rcard-meta">Dudczyk, J. et al. · Sensors MDPI 22(12), 4323 · 2022 · doi:10.3390/s22124323</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Fusión de datos radar, RF y EO/IR para localización 3D de UAVs. Evalúa métodos de fusión Kalman, Bayesianos y basados en redes neuronales para combinar estimaciones DOA de múltiples sensores. Referencia técnica para la evolución del sistema hacia red de nodos con TDOA cooperativo y georreferenciación robusta.</div>
+        <div class="tags"><span class="tag tag-arch">Fusión 3D</span><span class="tag tag-ml">Filtro Kalman</span><span class="tag tag-arch">DOA multi-nodo</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:85%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s22124323" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">26</div>
+        <div>
+          <div class="rcard-title">A Review of Counter-UAS Technologies for Cooperative Defensive Teams of Drones</div>
+          <div class="rcard-meta">Castrillo, V.U. et al. · Drones MDPI 6(3), 65 · 2022 · doi:10.3390/drones6030065</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión de arquitecturas C-UAS cooperativas con equipos de drones defensivos. Analiza detección, persecución, interdicción cinemática y EW en despliegue distribuido. Referencia para la evolución del sistema hacia red multinodo con fusión TDOA y para comparar el enfoque semiactivo frente a sistemas cinéticos alternativos.</div>
+        <div class="tags"><span class="tag tag-arch">Cooperativo</span><span class="tag tag-ew">Interdicción</span><span class="tag tag-arch">Revisión</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:80%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/drones6030065" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">27</div>
+        <div>
+          <div class="rcard-title">Global Analysis of Active Defense Technologies for Unmanned Aerial Vehicle</div>
+          <div class="rcard-meta">Lyu, C. &amp; Zhan, R. · IEEE Aerospace and Electronic Systems Magazine 37(1), 6–31 · 2022 · doi:10.1109/MAES.2021.3115205</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Análisis global de tecnologías de defensa activa contra UAV publicado en la revista de referencia de IEEE AES. Cubre jamming RF, spoofing GNSS, sistemas de redes (net guns), laser y municiones dirigidas. Marco comparativo para situar el inhibidor semiactivo dentro del espectro completo de contramedidas y justificar su nicho de bajo perfil EM.</div>
+        <div class="tags"><span class="tag tag-arch">Revisión IEEE AES</span><span class="tag tag-ew">Activo vs Pasivo</span><span class="tag tag-ew">Jamming GNSS</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:88%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.1109/maes.2021.3115205" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">28</div>
+        <div>
+          <div class="rcard-title">Integrating Counter-UAS Systems into the UTM System for Reliable Decision Making</div>
+          <div class="rcard-meta">Abdulhadi et al. · arXiv:2111.07291 · 2021</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Propone la integración de sistemas C-UAS con la infraestructura UTM (UAS Traffic Management) para automatizar la toma de decisiones mediante Remote ID y AUTH-DB. Fundamento directo para los estados de Identificación y Clarificación de la FSM del CIC del sistema: consulta ID-DB + AUTH-DB + validación Remote ID antes de cualquier actuación activa.</div>
+        <div class="tags"><span class="tag tag-arch">UTM</span><span class="tag tag-arch">Remote ID</span><span class="tag tag-arch">Decisión</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:83%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2111.07291v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEC 07 -->
+  <div class="sec-hdr">
+    <span class="sec-num">07</span>
+    <span class="sec-name">Ciberseguridad UAS · Vulnerabilidades de Protocolo · Jamming Autónomo</span>
+  </div>
+  <div class="grid">
+
+    <div class="rcard" data-cats="ew arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">29</div>
+        <div>
+          <div class="rcard-title">An Autonomous Drone System with Jamming and Relative Positioning Capabilities</div>
+          <div class="rcard-meta">Souli, N. et al. · IEEE ICC 2022 · arXiv:2206.04307 · doi:10.1109/ICC45855.2022.9838783</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Sistema autónomo de interdicción que combina jamming RF selectivo con posicionamiento relativo preciso (RPS) para mantenerse en rango óptimo del UAS objetivo sin depender de GPS externo. Referencia técnica directa para el módulo RPS-JS del sistema: solución al problema de ego-jamming mediante alternancia controlada [JAMMING] / [RPS: corrección posición] con umbral temporal Td.</div>
+        <div class="tags"><span class="tag tag-ew">RPS-JS</span><span class="tag tag-ew">Jamming autónomo</span><span class="tag tag-arch">Posicionamiento</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:94%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2206.04307v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">30</div>
+        <div>
+          <div class="rcard-title">A Survey on Cybersecurity Attacks and Defenses for Unmanned Aerial Systems</div>
+          <div class="rcard-meta">Wang, Z. et al. · Journal of Systems Architecture 138, 102870 · 2023 · doi:10.1016/j.sysarc.2023.102870</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión exhaustiva de vectores de ataque cibernético sobre UAS: MAVLink (MitM, Skyjacking), GNSS spoofing sobre Filtro de Kalman, inyección en IMU/barómetro vía filtros paso bajo, DoS sobre SO embebido y ataques de saturación probabilística de sensores. Fundamento bibliográfico para la sección de explotación de vulnerabilidades del capítulo de inhibición GNSS/spoofing del TFG.</div>
+        <div class="tags"><span class="tag tag-ew">MAVLink</span><span class="tag tag-ew">GNSS Spoofing</span><span class="tag tag-ew">Ciberseguridad UAS</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:87%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.1016/j.sysarc.2023.102870" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEC 08 -->
+  <div class="sec-hdr">
+    <span class="sec-num">08</span>
+    <span class="sec-name">Detección Acústica Avanzada · Arrays Especializados · Firmas UAS</span>
+  </div>
+  <div class="grid">
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">31</div>
+        <div>
+          <div class="rcard-title">Acoustic Detection and Tracking of a Class I UAS with a Small Tetrahedral Microphone Array</div>
+          <div class="rcard-meta">Benyamin, M. &amp; Goldman, G.H. · Army Research Laboratory · Report</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Detección y tracking de UAS Clase I (< 20 kg) mediante array tetraédrico compacto de micrófonos. Evalúa estimación DOA 3D y persistencia de tracking bajo condiciones de ruido real. Directamente aplicable a la fase de localización acústica del sistema: valida la geometría de array y los umbrales de energía utilizados en el detector_acustico.py.</div>
+        <div class="tags"><span class="tag tag-acus">Array tetraédrico</span><span class="tag tag-acus">Clase I UAS</span><span class="tag tag-acus">Tracking 3D</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:86%"></div></div>
+        <a class="rcard-link" href="https://scholar.google.com/scholar?q=Acoustic+Detection+Tracking+Class+I+UAS+Tetrahedral+Microphone+Array+Benyamin+Goldman" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">32</div>
+        <div>
+          <div class="rcard-title">Investigating the Potential of UAV for Gunshot DoA Estimation and Shooter Localization</div>
+          <div class="rcard-meta">Fernandes, R.P. et al. · Research Paper</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Estudio sobre estimación de DOA acústico de disparos mediante UAV portador del array. Aunque el objetivo es localización de tiradores, los métodos de estimación DOA acústico en condiciones adversas con array embarcado son directamente aplicables al módulo Consola_DOA_MAUSB8.py y a la validación del algoritmo MUSIC en dominio acústico del sistema.</div>
+        <div class="tags"><span class="tag tag-acus">DOA Acústico</span><span class="tag tag-acus">Condiciones adversas</span><span class="tag tag-acus">MUSIC</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:72%"></div></div>
+        <a class="rcard-link" href="https://scholar.google.com/scholar?q=Investigating+potential+UAV+gunshot+DoA+estimation+shooter+localization+Fernandes" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">33</div>
+        <div>
+          <div class="rcard-title">Microphones on Drones – Perspectives for Soundscape</div>
+          <div class="rcard-meta">Sutin, A. et al. · Stevens Institute of Technology · Research Paper</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Análisis de la viabilidad y perspectivas de sistemas de micrófonos embarcados en drones para monitorización acústica. Evalúa el efecto del ruido de autopropulsión del UAV sobre la detección de fuentes externas y estrategias de supresión. Relevante para comprender las limitaciones del canal acústico en entornos con múltiples drones activos simultáneamente.</div>
+        <div class="tags"><span class="tag tag-acus">Soundscape</span><span class="tag tag-acus">Ruido autoprop.</span><span class="tag tag-acus">Embarcado</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:68%"></div></div>
+        <a class="rcard-link" href="https://scholar.google.com/scholar?q=Microphones+Drones+Perspectives+Soundscape+Sutin+Salloum+Sedunov" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">34</div>
+        <div>
+          <div class="rcard-title">Drone Noise Emission Characteristics and Noise Effects on Humans — A Systematic Review</div>
+          <div class="rcard-meta">Schäffer, B. et al. · International Journal of Environmental Research and Public Health 18(11), 5940 · 2021 · doi:10.3390/ijerph18115940</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión sistemática de las características de emisión acústica de drones y sus efectos sobre humanos. Caracteriza el espectro de ruido de diferentes configuraciones multirrotor, incluyendo la influencia del número de palas, velocidad de rotación y geometría del carenado. Fundamento para justificar los rangos frecuenciales del filtro Butterworth y los umbrales de energía del detector.</div>
+        <div class="tags"><span class="tag tag-acus">Emisión ruido</span><span class="tag tag-acus">Espectro BPF</span><span class="tag tag-acus">Revisión</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:78%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/ijerph18115940" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">35</div>
+        <div>
+          <div class="rcard-title">Acoustic Non-Destructive Testing of UAS Propellers During Pre-Departure and Post-Flight Checks</div>
+          <div class="rcard-meta">Soria Gomez, M. et al. · Research and Review Journal of Nondestructive Testing 1(1) · 2023 · doi:10.58286/28093</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Aplicación de métodos acústicos para inspección no destructiva de hélices UAS antes y después del vuelo. Aunque el objetivo primario es NDT, el análisis de las firmas acústicas características de hélices en buen estado vs. dañadas complementa el conocimiento del canal acústico de detección: las variaciones en la firma BPF por estado de las palas afectan directamente a la robustez del clasificador del sistema.</div>
+        <div class="tags"><span class="tag tag-acus">Firma hélices</span><span class="tag tag-acus">NDT acústico</span><span class="tag tag-acus">BPF</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:62%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.58286/28093" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEC 09 -->
+  <div class="sec-hdr">
+    <span class="sec-num">09</span>
+    <span class="sec-name">Detección Multiespectral · EO/IR · Trayectoria · Doctrina UAS</span>
+  </div>
+  <div class="grid">
+
+    <div class="rcard" data-cats="ml arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">36</div>
+        <div>
+          <div class="rcard-title">Multispectral Detection of Commercial Unmanned Aerial Vehicles</div>
+          <div class="rcard-meta">Farlik, J. et al. · Sensors MDPI 19(7), 1517 · 2019 · doi:10.3390/s19071517</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Estudio comparativo de detección multiespectral de UAVs comerciales mediante cámaras visible, IR y radar. Establece la complementariedad de modalidades sensoriales y las condiciones bajo las cuales cada sensor falla individualmente. Marco de referencia para justificar el enfoque multisensor del sistema y la necesidad de fusión ACINT+SIGINT frente a sensores únicos.</div>
+        <div class="tags"><span class="tag tag-ml">Multiespectral</span><span class="tag tag-arch">EO/IR</span><span class="tag tag-arch">Fusión modal.</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:75%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s19071517" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml rf">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">37</div>
+        <div>
+          <div class="rcard-title">Deep Learning Approach to UAV Detection and Classification by Using Compressively Sensed RF Signal</div>
+          <div class="rcard-meta">Mo, Y. et al. · Sensors MDPI 22(8), 3072 · 2022 · doi:10.3390/s22083072</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Clasificación de UAVs mediante deep learning sobre señales RF con compressed sensing para reducir la tasa de muestreo. Demuestra que la combinación de técnicas de compresión espectral con CNNs permite detección en entornos de bajo SNR con hardware de bajo coste. Complementa el enfoque de clasificación ML del CIC: técnica alternativa al análisis espectral completo con menor carga computacional para Raspberry Pi.</div>
+        <div class="tags"><span class="tag tag-ml">Compressed Sensing</span><span class="tag tag-rf">CNN RF</span><span class="tag tag-ml">Bajo SNR</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:80%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.3390/s22083072" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">38</div>
+        <div>
+          <div class="rcard-title">Drone Detection with Event Cameras</div>
+          <div class="rcard-meta">Magrini, G. et al. · arXiv:2508.04564 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Detección de drones mediante cámaras de eventos (event-based vision), que ofrecen latencia extremadamente baja (~1 ms) y alta resistencia al desenfoque por movimiento. Tecnología EO alternativa a cámaras convencionales que se ajusta al requisito de latencia < 200 ms del sistema semiactivo. Relevante para la línea futura de integración de sensor EO/IR de confirmación visual positiva (VID).</div>
+        <div class="tags"><span class="tag tag-ml">Event Camera</span><span class="tag tag-ml">Baja latencia</span><span class="tag tag-arch">EO/IR</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:70%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2508.04564v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">39</div>
+        <div>
+          <div class="rcard-title">Application of the Small UAV Defense System</div>
+          <div class="rcard-meta">Park, J. · Journal of Advanced Navigation Technology 21(1), 145–152 · 2017 · doi:10.12673/jant.2017.21.1.145</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Diseño y aplicación de un sistema de defensa frente a pequeños UAVs que integra detección RF, dirección de llegada y respuesta activa. Uno de los primeros sistemas integrados publicados de este tipo, con arquitectura conceptual muy similar al nodo semiactivo del TFG: detección pasiva → estimación DOA → actuación condicionada. Referencia histórica para la justificación del estado del arte.</div>
+        <div class="tags"><span class="tag tag-arch">Sistema integrado</span><span class="tag tag-rf">DOA</span><span class="tag tag-ew">Respuesta activa</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:76%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.12673/jant.2017.21.1.145" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">40</div>
+        <div>
+          <div class="rcard-title">Towards Robust UAV Tracking in GNSS-Denied Environments: A Multi-LiDAR Multi-UAV Dataset</div>
+          <div class="rcard-meta">Catalano, I. et al. · arXiv:2310.09165 · 2023</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Dataset y metodología para tracking robusto de múltiples UAVs en entornos sin GPS mediante LiDAR. Aborda el mismo escenario de degradación GNSS que el sistema semiactivo genera en la fase de inhibición: cuando el UAS hostil pierde GNSS, su comportamiento de emergencia puede predecirse. Referencia para el análisis del efecto de GNSS spoofing sobre la trayectoria del UAS objetivo.</div>
+        <div class="tags"><span class="tag tag-arch">GNSS-Denied</span><span class="tag tag-arch">Multi-UAV</span><span class="tag tag-ew">Spoofing efecto</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:65%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2310.09165v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">41</div>
+        <div>
+          <div class="rcard-title">Wargaming the Enemy Unmanned Aircraft System (UAS) Threat</div>
+          <div class="rcard-meta">Neuenswander, D.M. (Col. USAF Ret.) · Research Paper</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Análisis doctrinal del empleo táctico de UAS como amenaza en conflictos modernos, con enfoque en el ciclo sensor-to-shooter y la doctrina de empleo masivo en Ucrania. Fundamento doctrinal para la sección de Motivación del TFG: justifica por qué el sistema no es solo una solución técnica sino una respuesta a un cambio real en las amenazas del campo de batalla contemporáneo.</div>
+        <div class="tags"><span class="tag tag-arch">Doctrina C-UAS</span><span class="tag tag-arch">Ucrania</span><span class="tag tag-arch">Sensor-to-shooter</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:82%"></div></div>
+        <a class="rcard-link" href="https://scholar.google.com/scholar?q=Wargaming+Enemy+Unmanned+Aircraft+System+UAS+Threat+Neuenswander" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="sdr arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">42</div>
+        <div>
+          <div class="rcard-title">Dynamically Tunable Helical Antenna</div>
+          <div class="rcard-meta">Chien, E. &amp; Steckel, J. · arXiv:2506.14065 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Diseño de antena helicoidal con sintonización dinámica para aplicaciones SDR en bandas ISM. Relevante para la selección de hardware de antena del nodo sensor: complementa a las antenas TP-Link TL-ANT2409A (9 dBi, 2.4 GHz) utilizadas en el sistema, y aporta perspectivas de evolución hacia antenas reconfigurables que cubran simultáneamente 2.4 y 5.8 GHz sin necesidad de cambio físico.</div>
+        <div class="tags"><span class="tag tag-sdr">Antena SDR</span><span class="tag tag-sdr">ISM Band</span><span class="tag tag-sdr">Reconfigurable</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:60%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2506.14065v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch acus">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">43</div>
+        <div>
+          <div class="rcard-title">Red de Sensores para la Detección de Drones Aéreos en Interiores</div>
+          <div class="rcard-meta">De Asís Aznar de la Riera, F. · Trabajo Académico</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Diseño de red de sensores heterogéneos para detección de drones en entornos interiores. Trabajo en español que aborda la arquitectura de red distribuida de nodos sensor, la comunicación entre ellos y la fusión de evidencias para reducir falsas alarmas. Referencia en castellano relevante para la arquitectura de red multinodo del sistema y para la sección de trabajo futuro de despliegue cooperativo.</div>
+        <div class="tags"><span class="tag tag-arch">Red sensores</span><span class="tag tag-arch">Interiores</span><span class="tag tag-arch">Distribuido</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:73%"></div></div>
+        <a class="rcard-link" href="https://scholar.google.com/scholar?q=Red+sensores+detección+drones+aéreos+interiores+Aznar+Riera" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">44</div>
+        <div>
+          <div class="rcard-title">Label-Free Long-Horizon 3D UAV Trajectory Prediction via Motion-Aligned RGB and Event Cues</div>
+          <div class="rcard-meta">Liang, H. et al. · arXiv:2507.03365 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Predicción de trayectoria 3D a largo horizonte de UAVs sin necesidad de etiquetado, combinando cámara RGB convencional y event camera. Relevante para la evaluación de trayectoria que realiza el CIC antes de tomar la decisión de interdicción: un predictor de trayectoria permitiría anticipar si el UAS se dirige hacia la unidad protegida, reduciendo el tiempo de clarificación de identidad (55 ms actualmente).</div>
+        <div class="tags"><span class="tag tag-ml">Predicción trayectoria</span><span class="tag tag-ml">Event+RGB</span><span class="tag tag-arch">CIC decisión</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:66%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2507.03365v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml arch">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">45</div>
+        <div>
+          <div class="rcard-title">Label-Free Long-Horizon 3D UAV Trajectory Prediction via Motion-Aligned RGB and Event Cues</div>
+          <div class="rcard-meta">Liang, H. et al. · arXiv:2507.03365 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Predicción de trayectoria 3D a largo horizonte de UAVs sin etiquetado combinando RGB y event camera. Relevante para anticipar si el UAS se dirige hacia la unidad protegida y reducir el tiempo de clarificación en la FSM del CIC.</div>
+        <div class="tags"><span class="tag tag-ml">Trayectoria 3D</span><span class="tag tag-ml">Event+RGB</span><span class="tag tag-arch">CIC decisión</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:66%"></div></div>
+        <a class="rcard-link" href="http://arxiv.org/abs/2507.03365v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEC 10 -->
+  <div class="sec-hdr">
+    <span class="sec-num">10</span>
+    <span class="sec-name">Clasificación RF avanzada · Datasets · Hardware SDR adicional</span>
+  </div>
+  <div class="grid">
+
+    <div class="rcard" data-cats="ml rf">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">46</div>
+        <div>
+          <div class="rcard-title">Deep Learning for UAV Detection and Classification Via RF Signals</div>
+          <div class="rcard-meta">Missouri S&amp;T – Scholars Mine · 2024</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">ResNet-50V2 sobre espectrogramas RF para clasificar modos de vuelo de UAV. Compara representaciones tiempo-frecuencia y analiza robustez frente a AWGN y Rayleigh fading. Fundamento para el criterio de decisión escalonada con persistencia temporal del sistema propuesto.</div>
+        <div class="tags"><span class="tag tag-ml">ResNet-50V2</span><span class="tag tag-rf">Espectrograma</span><span class="tag tag-ml">AWGN</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:83%"></div></div>
+        <a class="rcard-link" href="https://scholarsmine.mst.edu/ele_comeng_facwork" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">47</div>
+        <div>
+          <div class="rcard-title">Acoustic-Based Detection of UAVs Using ML: Analysis of Distance and Environmental Effects</div>
+          <div class="rcard-meta">Electronics MDPI 13(3), 643 · 2024</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Evaluación sistemática de detectores acústicos SVM y CNN con análisis de degradación por distancia y entorno. Cubre firma HERM y efectos de ruido de fondo urbano e industrial. Referencia técnica para el canal acústico complementario del nodo sensor con micrófono USB.</div>
+        <div class="tags"><span class="tag tag-acus">HERM</span><span class="tag tag-ml">SVM / CNN</span><span class="tag tag-acus">Distancia</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:84%"></div></div>
+        <a class="rcard-link" href="https://www.mdpi.com/2079-9292/13/3/643" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">48</div>
+        <div>
+          <div class="rcard-title">From Classical Approaches to Recent Advancements: A Holistic Review of Acoustic Detection for UAVs</div>
+          <div class="rcard-meta">AIP Advances 15(12) · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión comprehensiva del estado del arte en detección acústica de UAV: adquisición de señal, separación de fuentes, extracción de características (Mel-espectrograma, MFCC), clasificación y localización. Fundamento del canal acústico como complemento a la detección RF.</div>
+        <div class="tags"><span class="tag tag-acus">MFCC / Mel</span><span class="tag tag-ml">Revisión 2025</span><span class="tag tag-acus">Localización</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:78%"></div></div>
+        <a class="rcard-link" href="https://pubs.aip.org/aip/adv/article/15/12/120701/" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">49</div>
+        <div>
+          <div class="rcard-title">Electronic Warfare Cyberattacks, Countermeasures and Modern Defensive Strategies of UAV Avionics: A Survey</div>
+          <div class="rcard-meta">Yu, A. et al. · arXiv:2504.07358 · 2025</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Análisis exhaustivo de vulnerabilidades de comunicaciones UAS frente a jamming (FHSS, DSSS, C2 y GNSS) y estrategias defensivas. Discute el dilema entre eficacia de la inhibición y la firma electromagnética generada, tema central de la justificación EMCON del sistema.</div>
+        <div class="tags"><span class="tag tag-ew">FHSS/DSSS</span><span class="tag tag-ew">GNSS Spoofing</span><span class="tag tag-ew">EMCON</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:88%"></div></div>
+        <a class="rcard-link" href="https://arxiv.org/html/2504.07358v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">50</div>
+        <div>
+          <div class="rcard-title">Taxonomy of Physical Layer Jamming Techniques and Strategies for Security Enhancement in Wireless Communication</div>
+          <div class="rcard-meta">Shahid, M.F. et al. · TechRxiv Preprint · doi:10.36227/techrxiv.172425846</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Taxonomía completa de técnicas de jamming en capa física: narrowband, barrage, sweep, pulse y reactive jamming. Analiza eficiencia, probabilidad de detección y colateralidad. Fundamento teórico para la selección de la contramedida electrónica en la fase activa del inhibidor.</div>
+        <div class="tags"><span class="tag tag-ew">Reactive Jamming</span><span class="tag tag-ew">Sweep</span><span class="tag tag-ew">Taxonomía</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:86%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.36227/techrxiv.172425846.66605015/v1" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">51</div>
+        <div>
+          <div class="rcard-title">Counter-UAS (C-UAS): State of the Art, Challenges and Future Trends</div>
+          <div class="rcard-meta">Wang, J., Liu, Y., Song, H. · IEEE AES Magazine 36(3), 4–29 · 2021 · arXiv:2008.12461</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Revisión de referencia IEEE en C-UAS. Analiza detección, identificación y mitigación de UAS desde perspectiva técnica y operacional, incluyendo limitaciones de sistemas activos y tendencias LPI/LPD. Imprescindible para el estado del arte y para justificar el enfoque semiactivo.</div>
+        <div class="tags"><span class="tag tag-arch">Revisión IEEE</span><span class="tag tag-ew">LPI/LPD</span><span class="tag tag-rf">C-UAS</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:97%"></div></div>
+        <a class="rcard-link" href="https://arxiv.org/abs/2008.12461" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch sdr">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">52</div>
+        <div>
+          <div class="rcard-title">A Drone Detection and Inhibition Tool using GNURadio and a Raspberry Pi</div>
+          <div class="rcard-meta">ResearchGate · 2020</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Referencia más cercana a la prueba de concepto hardware del TFG: Raspberry Pi + HackRF One + GNU Radio. Cubre recepción pasiva en 2.4/5.8 GHz, activación de jamming y supresión GPS L1. Implementación práctica y replicable, ideal para validar el diseño experimental del nodo sensor.</div>
+        <div class="tags"><span class="tag tag-sdr">HackRF One</span><span class="tag tag-sdr">Raspberry Pi</span><span class="tag tag-ew">GPS Denial</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:92%"></div></div>
+        <a class="rcard-link" href="https://www.researchgate.net/publication/343054471" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="acus ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">53</div>
+        <div>
+          <div class="rcard-title">Development of an Acoustic System for UAV Detection</div>
+          <div class="rcard-meta">Dumitrescu, C. et al. · Sensors MDPI 20(17), 4870 · 2020 · doi:10.3390/s20174870</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Array de micrófonos MEMS con redes neuronales concurrentes (CoNN) y análisis Wigner-Ville para clasificación acústica de 6 modelos de drones en entorno urbano real. Comparable al nodo sensor con micrófono USB; documenta procesado espectral acústico en tiempo real sobre hardware embebido.</div>
+        <div class="tags"><span class="tag tag-acus">Array MEMS</span><span class="tag tag-ml">CoNN</span><span class="tag tag-acus">Wigner-Ville</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:80%"></div></div>
+        <a class="rcard-link" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7506852/" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="ml rf">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">54</div>
+        <div>
+          <div class="rcard-title">Robust Low-Cost Drone Detection and Classification in Low SNR Environments</div>
+          <div class="rcard-meta">Glüge, S. et al. · arXiv:2406.18624 · 2024</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">CNNs sobre espectrogramas RF para clasificación en entornos de bajo SNR. Field test con hardware de bajo coste (PC + SDR + antena omnidireccional), comparable al nodo sensor del sistema. Aborda directamente la problemática de falsas alarmas en entornos espectralmente congestionados.</div>
+        <div class="tags"><span class="tag tag-rf">Bajo SNR</span><span class="tag tag-ml">CNN</span><span class="tag tag-sdr">Low-Cost SDR</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:90%"></div></div>
+        <a class="rcard-link" href="https://arxiv.org/html/2406.18624v3" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="rf ml">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">55</div>
+        <div>
+          <div class="rcard-title">Drone Detection and Tracking Using RF Identification Signals</div>
+          <div class="rcard-meta">Aouladhadj, D. et al. · Sensors MDPI 23(17), 7650 · 2023 · doi:10.3390/s23177650</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Detección y tracking pasivo de drones mediante decodificación de paquetes Drone ID en Wi-Fi 2.4/5.8 GHz. Estima posición 2D, altitud y velocidad en tiempo real sin emitir señal propia. Alcances comprobados hasta 3.7 km para plataformas DJI. Referencia clave para la fase de detección pasiva RF del sistema semiactivo.</div>
+        <div class="tags"><span class="tag tag-rf">RF Pasivo</span><span class="tag tag-ml">Drone ID</span><span class="tag tag-rf">2.4/5.8 GHz</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:98%"></div></div>
+        <a class="rcard-link" href="https://www.mdpi.com/1424-8220/23/17/7650" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="rf sdr">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">56</div>
+        <div>
+          <div class="rcard-title">Analysis of RF Signal Characteristics for Passive UAV Detection Development</div>
+          <div class="rcard-meta">Khantha, T. et al. · IEET Vol.10 No.2 · 2024</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Estudio empírico en campo libre sobre características espectrales de tres drones comerciales (DJI Mini 3, SJR/C F11 Pro, E88 Pro) en banda ISM 2.4 GHz. Valida el monitoreo espectral pasivo como método fiable de detección. Alta alineación con la prueba de concepto: mismas plataformas objetivo, mismo entorno de despliegue.</div>
+        <div class="tags"><span class="tag tag-rf">RF Pasivo</span><span class="tag tag-rf">Banda ISM</span><span class="tag tag-sdr">Campo Libre</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:95%"></div></div>
+        <a class="rcard-link" href="https://journal.eeaat.or.th/images/pdf/VOL10N2/2_Analysis%20of%20RF%20Signal%20Characteristics%20for%20Passive%20UAV%20Detection%20Development.pdf" target="_blank">Acceder</a>
+      </div>
+    </div>
+
+    <div class="rcard" data-cats="arch ew">
+      <div class="rcard-accent"></div>
+      <div class="rcard-head">
+        <div class="rcard-num">57</div>
+        <div>
+          <div class="rcard-title">Smart Drone Neutralization: AI-Driven RF Jamming and Modulation Detection with SDR</div>
+          <div class="rcard-meta">Nanayakkara, S. et al. · Drones and Autonomous Vehicles 2(4) · 2025 · doi:10.70322/dav.2025.10019</div>
+        </div>
+      </div>
+      <div class="rcard-body">
+        <div class="rcard-desc">Sistema detect-then-jam con Faster R-CNN sobre espectrogramas (99% precisión) y activación automática de jamming. Fundamenta la filosofía semiactiva: analiza el trade-off entre latencia de decisión y exposición electromagnética del sistema. Referencia directa para la fase activa de inhibición selectiva del TFG.</div>
+        <div class="tags"><span class="tag tag-ml">Faster R-CNN</span><span class="tag tag-ew">Jamming</span><span class="tag tag-arch">Pipeline</span></div>
+      </div>
+      <div class="rcard-foot">
+        <span class="rel-lbl">Relevancia</span>
+        <div class="rel-bar"><div class="rel-fill" style="width:95%"></div></div>
+        <a class="rcard-link" href="https://doi.org/10.70322/dav.2025.10019" target="_blank">Acceder</a>
       </div>
     </div>
 
@@ -1413,6 +2300,18 @@ footer {
       </div>
     </div>
 
+    <div class="fcard t-dataset" data-cat="dataset">
+      <div class="fcard-stripe"></div>
+      <div class="fcard-inner">
+        <div class="fcard-top"><span class="fcard-type">Dataset Acústico SAR</span><span class="free-badge">✓ Acceso libre</span></div>
+        <h3>DroneAudioset</h3>
+        <div class="fcard-url">arxiv.org/abs/2510.15383</div>
+        <p>Dataset de audio para búsqueda y rescate con drones (2025). Incluye firmas acústicas en entornos reales ruidosos, complementando al dataset DADS de Hugging Face. Útil para ampliar la diversidad de perfiles UAV en el entrenamiento del clasificador Random Forest del módulo cic_onefile.py.</p>
+        <div class="tags"><span class="tag">Audio SAR</span><span class="tag">Random Forest</span><span class="tag">Ruido fondo real</span></div>
+        <a class="fcard-link" href="http://arxiv.org/abs/2510.15383v1" target="_blank">Ir al recurso</a>
+      </div>
+    </div>
+
   </div>
 
   <!-- 05 Buscadores -->
@@ -1503,7 +2402,7 @@ footer {
   <div class="footer-inner">
     <div class="footer-col">
       <div class="footer-col-title">Centro Universitario de la Defensa</div>
-      <p>Escuela Naval Militar · Plaza de España s/n<br>36920 Marín (Pontevedra)<br>Tel. 986 804 900<br>gerente@cud.uvigo.es</p>
+      <p>Escuela Naval Militar · Plaza de España s/n<br>36920 Marín (Pontevedra)<br>Tel. 986 804 900<br><a href="mailto:nicolas.garciaamorena@gmail.com">nicolas.garciaamorena@gmail.com</a></p>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Adscripción universitaria</div>
@@ -1511,12 +2410,12 @@ footer {
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Documento</div>
-      <p>Repositorio Bibliográfico TFG C-UAS<br>REF: TFG-CUD-ENM · Curso 2025–2026<br>33 fuentes · IEEE / MDPI / arXiv / PMC / AIP<br>Todos los recursos de acceso abierto verificado</p>
+      <p>Repositorio Bibliográfico TFG C-UAS<br>REF: TFG-CUD-ENM · Curso 2025–2026<br>57 fuentes · 44 refs. técnicas · IEEE / MDPI / arXiv / PMC<br>Todos los recursos de acceso abierto verificado</p>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Centro Universitario de la Defensa en la Escuela Naval Militar · cud.uvigo.es</span>
-    <span>Documento de uso académico interno · Febrero 2026</span>
+    <span>Documento de uso académico interno · Actualizado Marzo 2026</span>
   </div>
 </footer>
 
@@ -1534,7 +2433,8 @@ function fRef(cat, btn) {
   btn.classList.add('active');
   document.querySelectorAll('.rcard').forEach(c => {
     const cats = (c.dataset.cats || '').split(' ');
-    c.setAttribute('data-hidden', (cat === 'all' || cats.includes(cat)) ? 'false' : 'true');
+    const show = (cat === 'all' || cats.includes(cat));
+    c.classList.toggle('hidden', !show);
   });
 }
 
@@ -1549,17 +2449,18 @@ function fRes(cat, btn) {
 function cpKw(el) {
   navigator.clipboard.writeText(el.textContent).then(() => {
     el.classList.add('clicked');
-    setTimeout(() => el.classList.remove('clicked'), 1300);
+    setTimeout(() => el.classList.remove('clicked'), 1200);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = el.textContent;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    el.classList.add('clicked');
+    setTimeout(() => el.classList.remove('clicked'), 1200);
   });
 }
-
-window.addEventListener('load', () => {
-  document.querySelectorAll('.rel-fill').forEach(bar => {
-    const w = bar.style.width;
-    bar.style.width = '0';
-    setTimeout(() => bar.style.width = w, 400);
-  });
-});
 </script>
 </body>
 </html>
