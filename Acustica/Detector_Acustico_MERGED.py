@@ -1938,47 +1938,47 @@ class MergedUI:
                     self.hotmap = hm
                     self.last_hotmap_ts = float(ts)
 
-                    # gating por detección
-                    if not self.det_detected or self.det_calibrating:
-                        # standby DOA: no actualizar, mantiene último fiable
-                        self.doa_theta = self._doa_last_good_theta
-                        self.doa_sector_width_deg = 120.0 if self._doa_last_good_theta is not None else None
-                        self.doa_conf = 0.0
-                        self.doa_ambiguous = False
-                    else:
-                        est = self._estimate_doa(hm)
-                        if est is None:
-                            # frame malo -> no actualizar
-                            # mantener último valor
-                            self.doa_theta = self._doa_last_good_theta
-                            self.doa_sector_width_deg = 120.0 if self._doa_last_good_theta is not None else None
-                            self.doa_conf = 0.0
-                            self.doa_ambiguous = False
-                        else:
-                            theta, sector_deg, conf, amb, vmax, vmean, count, R = est
+# procesar DOA siempre, salvo durante calibración
+if self.det_calibrating:
+    self.doa_theta = self._doa_last_good_theta
+    self.doa_sector_width_deg = 120.0 if self._doa_last_good_theta is not None else None
+    self.doa_conf = 0.0
+    self.doa_ambiguous = False
+else:
+    est = self._estimate_doa(hm)
 
-                            # smoothing adaptativo por confianza
-                            alpha = self.doa_params.alpha_min + conf * (self.doa_params.alpha_max - self.doa_params.alpha_min)
-                            alpha = clamp(alpha, self.doa_params.alpha_min, self.doa_params.alpha_max)
+    if est is None:
+        # frame malo -> mantener último valor útil
+        self.doa_theta = self._doa_last_good_theta
+        self.doa_sector_width_deg = 120.0 if self._doa_last_good_theta is not None else None
+        self.doa_conf = 0.0
+        self.doa_ambiguous = False
+    else:
+        theta, sector_deg, conf, amb, vmax, vmean, count, R = est
 
-                            v = np.array([math.cos(theta), math.sin(theta)], dtype=np.float64)
-                            self._doa_vf = (1.0 - alpha) * self._doa_vf + alpha * v
-                            nrm = float(np.linalg.norm(self._doa_vf))
-                            if nrm > 1e-9:
-                                self._doa_vf /= nrm
-                            theta_f = math.atan2(float(self._doa_vf[1]), float(self._doa_vf[0]))
-                            if theta_f < 0:
-                                theta_f += 2 * math.pi
+        # smoothing adaptativo por confianza
+        alpha = self.doa_params.alpha_min + conf * (self.doa_params.alpha_max - self.doa_params.alpha_min)
+        alpha = clamp(alpha, self.doa_params.alpha_min, self.doa_params.alpha_max)
 
-                            self.doa_theta = theta_f
-                            self.doa_sector_width_deg = float(sector_deg)
-                            self.doa_conf = float(conf)
-                            self.doa_ambiguous = bool(amb)
+        v = np.array([math.cos(theta), math.sin(theta)], dtype=np.float64)
+        self._doa_vf = (1.0 - alpha) * self._doa_vf + alpha * v
+        nrm = float(np.linalg.norm(self._doa_vf))
+        if nrm > 1e-9:
+            self._doa_vf /= nrm
 
-                            # guardar último bueno si conf aceptable
-                            if conf >= 0.35:
-                                self._doa_last_good_theta = theta_f
-                                self._doa_trail.append(theta_f)
+        theta_f = math.atan2(float(self._doa_vf[1]), float(self._doa_vf[0]))
+        if theta_f < 0:
+            theta_f += 2 * math.pi
+
+        self.doa_theta = theta_f
+        self.doa_sector_width_deg = float(sector_deg)
+        self.doa_conf = float(conf)
+        self.doa_ambiguous = bool(amb)
+
+        # guardar último bueno
+        if conf >= 0.35:
+            self._doa_last_good_theta = theta_f
+            self._doa_trail.append(theta_f)
 
                     # dibujar DOA panel
                     self._draw_hotmap(self.hotmap)
