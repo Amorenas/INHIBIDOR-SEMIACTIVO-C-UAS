@@ -47,7 +47,7 @@ APT_PACKAGES = [
 PIP_PACKAGES = [
     "numpy", "scipy", "sounddevice", "pyserial", "pillow",
     "tqdm", "soundfile", "librosa", "scikit-learn", "joblib",
-    "huggingface_hub", "datasets", "pyarrow", "torchcodec"
+    "huggingface_hub", "datasets", "pyarrow", "torchcodec", "resampy"
 ]
 
 TARGET_SR = 16000
@@ -291,10 +291,15 @@ def energy_db(x: "np.ndarray") -> float:
     rms = float((x.astype("float64")**2).mean()**0.5)
     return 20.0 * math.log10(rms + eps)
 
-def resample_to(x: "np.ndarray", sr_in: int, sr_out: int, librosa_mod) -> "np.ndarray":
+def resample_to(x: "np.ndarray", sr_in: int, sr_out: int, librosa_mod=None) -> "np.ndarray":
     if sr_in == sr_out:
-        return x
-    y = librosa_mod.resample(x.astype("float32"), orig_sr=sr_in, target_sr=sr_out, res_type="kaiser_fast")
+        return x.astype("float32")
+    import math
+    from scipy.signal import resample_poly
+    g = math.gcd(int(sr_in), int(sr_out))
+    up = int(sr_out // g)
+    down = int(sr_in // g)
+    y = resample_poly(x.astype("float32"), up, down)
     return y.astype("float32")
 
 def extract_features(x_16k: "np.ndarray", cfg: FeatCfg, librosa_mod) -> "np.ndarray":
@@ -971,7 +976,11 @@ class CICApp:
                 if kind=="AUDIO_STATUS":
                     _,lvl,text=msg; self._append(text if lvl=="OK" else "[ERR] "+text)
                 elif kind=="AUDIO_FRAME":
-                    _,frame,sr=msg; self._process_audio_frame(frame, sr)
+                    _, frame, sr = msg
+                    try:
+                        self._process_audio_frame(frame, sr)
+                    except Exception as e:
+                        self._append(f"[ERR] AUDIO_FRAME: {e}")
                 elif kind=="STATUS":
                     _,lvl,text=msg; self._append(f"[DOA] {lvl}: {text}")
                 elif kind=="HOTMAP":
