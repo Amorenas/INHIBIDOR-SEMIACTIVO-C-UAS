@@ -47,7 +47,7 @@ APT_PACKAGES = [
 PIP_PACKAGES = [
     "numpy", "scipy", "sounddevice", "pyserial", "pillow",
     "tqdm", "soundfile", "librosa", "scikit-learn", "joblib",
-    "huggingface_hub", "datasets", "pyarrow"
+    "huggingface_hub", "datasets", "pyarrow", "torchcodec"
 ]
 
 TARGET_SR = 16000
@@ -323,6 +323,37 @@ def _dataset_candidates() -> List[str]:
             out.append(legacy)
     return out
 
+
+
+def _decode_audio_field(audio_obj):
+    """Convierte el campo audio del dataset HF a
+    {"array": [...], "sampling_rate": sr} sin depender de torchcodec.
+    """
+    import io
+    import numpy as np
+    import soundfile as sf
+
+    if isinstance(audio_obj, dict):
+        if "array" in audio_obj and "sampling_rate" in audio_obj:
+            arr = np.asarray(audio_obj["array"], dtype="float32")
+            return {"array": arr.tolist(), "sampling_rate": int(audio_obj["sampling_rate"])}
+
+        raw = audio_obj.get("bytes")
+        if raw is not None:
+            x, sr = sf.read(io.BytesIO(raw), dtype="float32", always_2d=False)
+            if getattr(x, "ndim", 1) > 1:
+                x = x.mean(axis=1)
+            return {"array": np.asarray(x, dtype="float32").tolist(), "sampling_rate": int(sr)}
+
+        path = audio_obj.get("path")
+        if path:
+            x, sr = sf.read(path, dtype="float32", always_2d=False)
+            if getattr(x, "ndim", 1) > 1:
+                x = x.mean(axis=1)
+            return {"array": np.asarray(x, dtype="float32").tolist(), "sampling_rate": int(sr)}
+
+    raise ValueError(f"Formato de audio no soportado: {type(audio_obj)}")
+
 def ensure_dataset():
     DATA_ROOT.mkdir(parents=True, exist_ok=True)
     local = find_parquets()
@@ -332,9 +363,11 @@ def ensure_dataset():
     info("[BOOT] No encuentro parquets. Intentando descargar DADS desde Hugging Face...")
     if not have_internet_hint():
         raise SystemExit("No hay internet y no existe dataset local.")
-    from datasets import load_dataset
+
+    from datasets import load_dataset, Audio
     import pyarrow as pa
     import pyarrow.parquet as pq2
+
     last = None
     for rid in _dataset_candidates():
         if not rid:
@@ -342,21 +375,37 @@ def ensure_dataset():
         try:
             info(f"[BOOT] load_dataset('{rid}', split='train')")
             ds = load_dataset(rid, split="train")
+
+            try:
+                if hasattr(ds, 'features') and 'audio' in ds.features:
+                    ds = ds.cast_column('audio', Audio(decode=False))
+                    info('[BOOT] Columna audio forzada a decode=False.')
+            except Exception as e:
+                info(f"[WARN] No pude cast_column(Audio(decode=False)): {e}")
+
             shard = 0
             batch = []
-            batch_size = 4096
+            batch_size = 256
             for ex in ds:
-                audio = ex.get("audio") if isinstance(ex, dict) else None
-                label = ex.get("label") if isinstance(ex, dict) else None
+                if not isinstance(ex, dict):
+                    continue
+                audio = ex.get('audio')
+                label = ex.get('label')
                 if audio is None or label is None:
                     continue
-                batch.append({"audio": audio, "label": int(label)})
+                try:
+                    audio_fixed = _decode_audio_field(audio)
+                except Exception as e:
+                    info(f"[WARN] Ejemplo omitido por audio inválido: {e}")
+                    continue
+                batch.append({'audio': audio_fixed, 'label': int(label)})
                 if len(batch) >= batch_size:
                     pq2.write_table(pa.Table.from_pylist(batch), DATA_ROOT / f"train-{shard:05d}.parquet")
                     shard += 1
                     batch.clear()
             if batch:
                 pq2.write_table(pa.Table.from_pylist(batch), DATA_ROOT / f"train-{shard:05d}.parquet")
+
             local = find_parquets()
             if local:
                 info(f"[OK] Dataset descargado desde {rid} en {DATA_ROOT} ({len(local)} parquet)")
