@@ -23,10 +23,10 @@ Dataset:
 """
 from __future__ import annotations
 
-import os, sys, math, time, glob, random, queue, threading, subprocess, pathlib
+import os, sys, math, time, glob, random, queue, threading, subprocess, pathlib, shutil
 from dataclasses import dataclass
 from collections import deque
-from typing import Optional, List
+from typing import Optional, List, Iterable
 
 APP_TITLE = "CIC Unificado - Umbral + DOA + ML (OneFile)"
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -35,6 +35,9 @@ MODEL_DIR = ROOT / "models"
 MODEL_PATH = MODEL_DIR / "drone_clf.joblib"
 DATA_ROOT = ROOT / "data" / "dads" / "data"
 LOG_PATH = ROOT / "logs" / "cic_onefile.log"
+APT_BACKUP_DIR = ROOT / "logs" / "apt_sources_backups"
+DEFAULT_DADS_REPOS = ["geronimobasso/drone-audio-detection-samples"]
+BOOTSTRAP_ENV = "CIC_ONEFILE_APT_DONE"
 
 APT_PACKAGES = [
     "python3", "python3-venv", "python3-pip", "python3-tk",
@@ -116,12 +119,108 @@ def have_internet_hint() -> bool:
     except Exception:
         return False
 
+def _apt_source_files() -> List[pathlib.Path]:
+    files = [pathlib.Path("/etc/apt/sources.list")]
+    d = pathlib.Path("/etc/apt/sources.list.d")
+    if d.exists():
+        files.extend(sorted(d.glob("*.list")))
+        files.extend(sorted(d.glob("*.sources")))
+    return files
+
+def _backup_file_once(src: pathlib.Path):
+    try:
+        if not src.exists():
+            return
+        rel = str(src).lstrip("/").replace("/", "__")
+        dst = APT_BACKUP_DIR / rel
+        if dst.exists():
+            return
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+    except Exception as e:
+        info(f"[WARN] No pude respaldar {src}: {e}")
+
+def _sanitize_list_file(src: pathlib.Path) -> bool:
+    try:
+        raw = src.read_text(encoding="utf-8", errors="ignore").splitlines(True)
+    except Exception:
+        return False
+    changed = False
+    out = []
+    for line in raw:
+        s = line.strip()
+        low = s.lower()
+        bad_cdrom = low.startswith("deb cdrom:") or low.startswith("deb-src cdrom:")
+        bad_canonical = ("archive.canonical.com/ubuntu" in low and " noble" in low)
+        if s and not s.startswith("#") and (bad_cdrom or bad_canonical):
+            out.append(f"# [cic_onefile disabled] {line}" if line.endswith("\n") else f"# [cic_onefile disabled] {line}\n")
+            changed = True
+        else:
+            out.append(line)
+    if changed:
+        _backup_file_once(src)
+        src.write_text("".join(out), encoding="utf-8")
+        info(f"[APT] Ajustado {src}")
+    return changed
+
+def _sanitize_sources_file(src: pathlib.Path) -> bool:
+    try:
+        raw = src.read_text(encoding="utf-8", errors="ignore").splitlines(True)
+    except Exception:
+        return False
+    changed = False
+    out = []
+    skip_prev = False
+    for line in raw:
+        s = line.strip()
+        low = s.lower()
+        if s.startswith("Enabled:") and skip_prev:
+            if s != "Enabled: no":
+                out.append("Enabled: no\n")
+                changed = True
+            else:
+                out.append(line)
+            skip_prev = False
+            continue
+        bad = False
+        if low.startswith("uris:") and "archive.canonical.com/ubuntu" in low:
+            out.append(line)
+            skip_prev = True
+            continue
+        if low.startswith("suites:") and "noble" in low and skip_prev:
+            bad = True
+        if bad:
+            out.append(line)
+        else:
+            out.append(line)
+            if s and not low.startswith(("types:", "uris:", "suites:", "components:", "signed-by:", "architectures:", "enabled:")):
+                skip_prev = False
+    if changed:
+        _backup_file_once(src)
+        src.write_text("".join(out), encoding="utf-8")
+        info(f"[APT] Ajustado {src}")
+    return changed
+
+def sanitize_apt_sources():
+    changed = False
+    for src in _apt_source_files():
+        if src.suffix == ".list":
+            changed = _sanitize_list_file(src) or changed
+        elif src.suffix == ".sources":
+            changed = _sanitize_sources_file(src) or changed
+    return changed
+
 def ensure_apt():
     if not is_root():
         info("[WARN] No soy root; no puedo instalar por apt. Continúo.")
         return
+    if os.environ.get(BOOTSTRAP_ENV) == "1":
+        info("[BOOT] Bootstrap APT ya realizado en esta sesión; omito repetición.")
+        return
+    sanitize_apt_sources()
     run_cmd(["apt-get", "update"], check=False)
     run_cmd(["apt-get", "install", "-y"] + APT_PACKAGES, check=False)
+    os.environ[BOOTSTRAP_ENV] = "1"
 
 def ensure_user_dialout():
     if not is_root():
@@ -150,6 +249,8 @@ def ensure_venv_and_reexec():
     env = os.environ.copy()
     env["VIRTUAL_ENV"] = str(VENV_DIR)
     env["PATH"] = str(VENV_DIR / "bin") + ":" + env.get("PATH", "")
+    if os.environ.get(BOOTSTRAP_ENV) == "1":
+        env[BOOTSTRAP_ENV] = "1"
     os.execve(str(py_in_venv), [str(py_in_venv), str(__file__)] + sys.argv[1:], env)
 
 def lazy_imports():
@@ -209,45 +310,65 @@ def extract_features(x_16k: "np.ndarray", cfg: FeatCfg, librosa_mod) -> "np.ndar
 def find_parquets() -> List[str]:
     return sorted(glob.glob(str(DATA_ROOT / "*.parquet")))
 
+def _dataset_candidates() -> List[str]:
+    repo = os.environ.get("DADS_REPO", "").strip()
+    out = []
+    if repo:
+        out.append(repo)
+    for rid in DEFAULT_DADS_REPOS:
+        if rid not in out:
+            out.append(rid)
+    for legacy in ["drone-audio-detection-samples", "DroneAudioDetectionSamples/DADS"]:
+        if legacy not in out:
+            out.append(legacy)
+    return out
+
 def ensure_dataset():
     DATA_ROOT.mkdir(parents=True, exist_ok=True)
-    if find_parquets():
-        info(f"[OK] Dataset local presente en {DATA_ROOT}")
+    local = find_parquets()
+    if local:
+        info(f"[OK] Dataset local presente en {DATA_ROOT} ({len(local)} parquet)")
         return
-    info("[BOOT] No encuentro parquets. Intentando descargar dataset (HF)...")
+    info("[BOOT] No encuentro parquets. Intentando descargar DADS desde Hugging Face...")
     if not have_internet_hint():
         raise SystemExit("No hay internet y no existe dataset local.")
     from datasets import load_dataset
-    repo = os.environ.get("DADS_REPO", "").strip()
-    candidates = [repo] if repo else []
-    candidates += ["DroneAudioDetectionSamples/DADS", "drone-audio-detection-samples"]
+    import pyarrow as pa
+    import pyarrow.parquet as pq2
     last = None
-    for rid in candidates:
+    for rid in _dataset_candidates():
         if not rid:
             continue
         try:
             info(f"[BOOT] load_dataset('{rid}', split='train')")
             ds = load_dataset(rid, split="train")
-            import pyarrow as pa
-            import pyarrow.parquet as pq2
             shard = 0
             batch = []
             batch_size = 4096
             for ex in ds:
-                batch.append({"audio": ex["audio"], "label": int(ex["label"])})
+                audio = ex.get("audio") if isinstance(ex, dict) else None
+                label = ex.get("label") if isinstance(ex, dict) else None
+                if audio is None or label is None:
+                    continue
+                batch.append({"audio": audio, "label": int(label)})
                 if len(batch) >= batch_size:
                     pq2.write_table(pa.Table.from_pylist(batch), DATA_ROOT / f"train-{shard:05d}.parquet")
                     shard += 1
                     batch.clear()
             if batch:
                 pq2.write_table(pa.Table.from_pylist(batch), DATA_ROOT / f"train-{shard:05d}.parquet")
-            if find_parquets():
-                info("[OK] Dataset descargado.")
+            local = find_parquets()
+            if local:
+                info(f"[OK] Dataset descargado desde {rid} en {DATA_ROOT} ({len(local)} parquet)")
                 return
         except Exception as e:
             last = e
             info(f"[WARN] Falló '{rid}': {e}")
-    raise SystemExit(f"No pude descargar dataset. Define DADS_REPO. Último error: {last}")
+    raise SystemExit(
+        "No pude descargar DADS. Usa el repo correcto de Hugging Face "
+        "(por defecto: geronimobasso/drone-audio-detection-samples) o define DADS_REPO. "
+        f"Último error: {last}"
+    )
 
 def iter_parquet_examples(parquet_files: List[str], rng: random.Random):
     files = parquet_files[:]
